@@ -1,0 +1,17 @@
+{
+  "name": "Hotel Cali",
+  "short_name": "Hotel Cali",
+  "description": "Floor 4's shared hostel management app",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0E1526",
+  "theme_color": "#E23B4E",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

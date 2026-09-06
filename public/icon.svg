@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0E1526"/>
+  <rect x="0" y="0" width="256" height="512" rx="96" fill="#E23B4E" opacity="0.9"/>
+  <rect x="256" y="0" width="256" height="512" rx="96" fill="#3E7CDA" opacity="0.9"/>
+  <rect x="96" y="0" width="320" height="512" fill="#0E1526"/>
+  <text x="256" y="290" font-family="Georgia, serif" font-size="150" font-weight="bold"
+        fill="#F4F1E9" text-anchor="middle">HC</text>
+</svg>
