@@ -19,7 +19,7 @@ export default function MealClock({ compact }) {
         const active = now >= s && now <= e
         return (
           <div key={w.name} className={`schedule-row ${active ? 'now' : ''}`}>
-            <span>{w.name}{active ? ' — open now' : ''}</span>
+            <span>{w.name}{active ? ' · open now' : ''}</span>
             <span>{fmtHM(w.start)} – {fmtHM(w.end)}</span>
           </div>
         )

@@ -1,5 +1,6 @@
 -- Hotel Cali — Supabase schema
--- Run this in the Supabase SQL editor (Project > SQL Editor > New query)
+-- Run this in the Supabase SQL editor (Project > SQL Editor > New query),
+-- then run supabase/migrations/002_pings_tab_uploads.sql for the newer features.
 
 create extension if not exists "pgcrypto";
 

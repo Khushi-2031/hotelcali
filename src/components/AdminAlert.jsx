@@ -28,7 +28,7 @@ export default function AdminAlert({ onChange }) {
     <div>
       <SectionHead
         title="Admin Alert"
-        desc="For anything urgent enough that the whole floor needs to know right now — this pushes a notification to everyone who has notifications enabled and shows a banner across the app for 30 minutes."
+        desc="For anything urgent enough that the whole floor needs to know right now. This pushes a notification to everyone who has notifications enabled and shows a banner across the app for 30 minutes."
       />
       <form className="inline-form" onSubmit={submit}>
         <div className="form-row">

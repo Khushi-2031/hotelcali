@@ -10,7 +10,7 @@ import { pushToast } from './Toast'
  * resolveField: name of boolean column that a "mark done" button flips, or null
  * resolveLabel / doneLabel: button text / done-state pill text
  */
-export default function ListModule({ table, title, desc, fields, renderCard, resolveField, resolveLabel = 'Mark resolved', doneLabel = 'Resolved', sortBy }) {
+export default function ListModule({ table, title, desc, fields, renderCard, resolveField, resolveLabel = 'Mark resolved', doneLabel = 'Resolved', sortBy, children, formTitle, submitLabel = 'Post', onPosted }) {
   const [rows, setRows] = useState([])
   const [form, setForm] = useState(() => Object.fromEntries(fields.map(f => [f.name, f.type === 'range' ? (f.default ?? 3) : (f.options?.[0] ?? '')])))
 
@@ -28,7 +28,8 @@ export default function ListModule({ table, title, desc, fields, renderCard, res
     const payload = { ...form }
     fields.forEach(f => { if (f.type === 'range') payload[f.name] = Number(payload[f.name]) })
     if (resolveField) payload[resolveField] = false
-    await insertRow(table, payload)
+    const saved = await insertRow(table, payload)
+    if (onPosted) await onPosted(saved || payload)
     pushToast('Posted')
     setForm(Object.fromEntries(fields.map(f => [f.name, f.type === 'range' ? (f.default ?? 3) : (f.options?.[0] ?? '')])))
     load()
@@ -41,8 +42,10 @@ export default function ListModule({ table, title, desc, fields, renderCard, res
 
   return (
     <div>
-      <SectionHead title={title} desc={desc} />
+      {title && <SectionHead title={title} desc={desc} />}
+      {children}
       <form className="inline-form" onSubmit={submit}>
+        {formTitle && <h3 className="form-title">{formTitle}</h3>}
         <div className="form-row">
           {fields.map(f => (
             <div key={f.name}>
@@ -67,7 +70,7 @@ export default function ListModule({ table, title, desc, fields, renderCard, res
             </div>
           ))}
         </div>
-        <button className="btn" type="submit">Post</button>
+        <button className="btn" type="submit">{submitLabel}</button>
       </form>
 
       {rows.length ? rows.map(row => {
@@ -87,7 +90,7 @@ export default function ListModule({ table, title, desc, fields, renderCard, res
             )}
           </div>
         )
-      }) : <Empty>Nothing here yet — be the first to post.</Empty>}
+      }) : <Empty>Nothing here yet. Be the first to post.</Empty>}
     </div>
   )
 }

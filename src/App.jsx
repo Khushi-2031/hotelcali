@@ -3,38 +3,33 @@ import Sidebar, { SECTIONS, TabBar, NeonSign } from './components/Sidebar'
 import CriticalBanner from './components/CriticalBanner'
 import Toast from './components/Toast'
 import Dashboard from './components/Dashboard'
-import Duties from './components/Duties'
 import Blinkit from './components/Blinkit'
+import SplitTab from './components/SplitTab'
 import Wakeup from './components/Wakeup'
 import Meals from './components/Meals'
 import Maintenance from './components/Maintenance'
-import FloorFund from './components/FloorFund'
 import Content from './components/Content'
-import Washer from './components/Washer'
 import Plans from './components/Plans'
 import Spc from './components/Spc'
 import Songs from './components/Songs'
-import Requests from './components/Requests'
 import HR from './components/HR'
 import Feedback from './components/Feedback'
+import { WhoAmI } from './components/People'
 import { initOneSignal, askForPushPermission } from './onesignal'
 import AdminAlert from './components/AdminAlert'
 
 const SCREENS = {
   dashboard: Dashboard,
   alert: AdminAlert,
-  duties: Duties,
   blinkit: Blinkit,
+  split: SplitTab,
   wakeup: Wakeup,
   meals: Meals,
   maintenance: Maintenance,
-  fund: FloorFund,
   content: Content,
-  washer: Washer,
   plans: Plans,
   spc: Spc,
   songs: Songs,
-  requests: Requests,
   hr: HR,
   feedback: Feedback,
 }
@@ -67,7 +62,8 @@ export default function App() {
           </div>
         )}
         <div id="content">
-          <Screen onChange={() => setBannerKey(k => k + 1)} />
+          <WhoAmI />
+          <Screen onChange={() => setBannerKey(k => k + 1)} go={select} />
           <button className="btn ghost small notify-btn" onClick={askForPushPermission}>Enable notifications on this device</button>
         </div>
       </div>

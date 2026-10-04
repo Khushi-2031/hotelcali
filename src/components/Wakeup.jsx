@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react'
-import { listAll, insertRow } from '../api'
+import { listAll, insertRow, sendPing } from '../api'
 import { ALL_PEOPLE } from '../data/roster'
 import { SectionHead, Pill, Empty } from './ui'
 import { pushToast } from './Toast'
+import { NotifyPicker } from './People'
+import { useMe, firstName } from '../identity'
 
 export default function Wakeup({ onChange }) {
+  const me = useMe()
   const [rows, setRows] = useState([])
-  const [name, setName] = useState(ALL_PEOPLE[0])
+  const [name, setName] = useState(me || ALL_PEOPLE[0])
+  const [to, setTo] = useState([])
   const [room, setRoom] = useState('')
   const [time, setTime] = useState('')
   const [date, setDate] = useState('')
@@ -20,8 +24,14 @@ export default function Wakeup({ onChange }) {
     e.preventDefault()
     const wakeAt = new Date(`${date}T${time}`).toISOString()
     await insertRow('wakeup_calls', { name, room, wake_at: wakeAt, notes, critical })
-    pushToast('Wake-up call scheduled')
-    setNotes(''); setCritical(false)
+    const at = new Date(wakeAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+    await sendPing({
+      from: name, recipients: to, kind: 'wakeup',
+      title: critical ? 'Grade-cut wake-up call' : 'Wake-up call',
+      body: `${firstName(name)}${room ? ' (Room ' + room + ')' : ''} needs waking at ${at}.${notes.trim() ? ' ' + notes.trim() : ''}`,
+    })
+    pushToast(to.length ? 'Scheduled and pinged' : 'Wake-up call scheduled')
+    setNotes(''); setCritical(false); setTo([])
     load()
     onChange && onChange()
   }
@@ -31,7 +41,7 @@ export default function Wakeup({ onChange }) {
 
   return (
     <div>
-      <SectionHead title="Wake-up Calls" desc={'Ask the floor to wake you at a specific time. Flag "grade-cut situation" and it jumps to the top as a critical alert for everyone.'} />
+      <SectionHead title="Wake-up Calls" desc={'Ask the floor to wake you at a specific time and ping the people who should knock. Flag "grade-cut situation" and it jumps to the top as a critical alert.'} />
       <form className="inline-form" onSubmit={submit}>
         <div className="form-row">
           <div>
@@ -50,11 +60,12 @@ export default function Wakeup({ onChange }) {
           <div><label>Notes</label><input value={notes} onChange={e => setNotes(e.target.value)} placeholder="knock twice, I sleep through calls" /></div>
           <div style={{ display: 'flex', alignItems: 'end', gap: 8 }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: 6, margin: 0 }}>
-              <input type="checkbox" style={{ width: 'auto' }} checked={critical} onChange={e => setCritical(e.target.checked)} /> Grade-cut situation (critical)
+              <input type="checkbox" style={{ width: 'auto' }} checked={critical} onChange={e => { setCritical(e.target.checked); if (e.target.checked && !to.length) setTo(['ALL']) }} /> Grade-cut situation (critical)
             </label>
           </div>
         </div>
-        <button className="btn" type="submit">Post</button>
+        <NotifyPicker label="Who should get pinged" value={to} onChange={setTo} />
+        <button className="btn" type="submit">Book my wake-up call</button>
       </form>
 
       {sorted.length ? sorted.map(w => (

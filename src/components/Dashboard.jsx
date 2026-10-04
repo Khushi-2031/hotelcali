@@ -1,36 +1,144 @@
 import { useEffect, useState } from 'react'
-import { listAll } from '../api'
-import { SectionHead } from './ui'
+import { listAll, insertRow, updateRow, sendPing } from '../api'
+import { useMe, firstName } from '../identity'
+import { SectionHead, Empty, fmtDate } from './ui'
+import { pushToast } from './Toast'
 import MealClock from './MealClock'
 
+const PRESETS = [
+  'Pick up my clothes from the washing machine',
+  'Collect my parcel from the gate',
+  'Swap the water can',
+  'Lend me an iron',
+]
+
+function FrontDeskRequests({ onCount }) {
+  const me = useMe()
+  const [rows, setRows] = useState([])
+  const [text, setText] = useState('')
+
+  async function load() {
+    const all = await listAll('front_desk_requests', { ascending: false })
+    const cutoff = Date.now() - 3 * 24 * 3600 * 1000
+    const recent = all.filter(r => !r.done || new Date(r.created_at).getTime() > cutoff).slice(0, 20)
+    setRows(recent)
+    onCount && onCount(all.filter(r => !r.done).length)
+  }
+  useEffect(() => { load() }, [])
+
+  async function post(e) {
+    e.preventDefault()
+    if (!text.trim()) return
+    if (!me) return pushToast('Check in with your name first')
+    await insertRow('front_desk_requests', { name: me, details: text.trim() })
+    await sendPing({ from: me, recipients: ['ALL'], kind: 'frontdesk', title: 'Front desk request', body: `${firstName(me)}: ${text.trim()}` })
+    pushToast('Sent to everyone')
+    setText('')
+    load()
+  }
+
+  async function claim(r) {
+    if (!me) return pushToast('Check in with your name first')
+    await updateRow('front_desk_requests', r.id, { claimed_by: me })
+    if (r.name !== me) await sendPing({ from: me, recipients: [r.name], kind: 'frontdesk', title: 'Front desk', body: `${firstName(me)} is on it: ${r.details}` })
+    load()
+  }
+
+  async function done(r) {
+    await updateRow('front_desk_requests', r.id, { done: true })
+    load()
+  }
+
+  return (
+    <>
+      <h3 className="subhead">Front desk requests</h3>
+      <form className="inline-form" onSubmit={post}>
+        <p className="form-hint">Need a hand? This pings everyone on the floor.</p>
+        <div className="quick-chips">
+          {PRESETS.map(p => <button type="button" key={p} className="np-chip" onClick={() => setText(p)}>{p}</button>)}
+        </div>
+        <div className="form-row" style={{ marginTop: 12 }}>
+          <div><label>Your request</label><input value={text} onChange={e => setText(e.target.value)} placeholder="e.g. washing machine clothes pickup, I'm in class till 5" required /></div>
+        </div>
+        <button className="btn" type="submit">Ask the floor</button>
+      </form>
+      {rows.length ? rows.map(r => (
+        <div className={`card ${r.done ? 'is-done' : ''}`} key={r.id}>
+          <div className="card-top">
+            <span className="card-title">{r.details}</span>
+            {r.done ? <span className="pill teal">Done</span> : r.claimed_by ? <span className="pill blue">{firstName(r.claimed_by)} is on it</span> : <span className="pill red">Open</span>}
+          </div>
+          <div className="card-meta">{r.name} · {fmtDate(r.created_at)}</div>
+          {!r.done && (
+            <div className="card-actions">
+              {!r.claimed_by && r.name !== me && <button className="btn small" onClick={() => claim(r)}>I'll do it</button>}
+              {(r.name === me || r.claimed_by === me) && <button className="btn small ghost" onClick={() => done(r)}>Mark done</button>}
+            </div>
+          )}
+        </div>
+      )) : <Empty>No open requests. Quiet night at the front desk.</Empty>}
+    </>
+  )
+}
+
+function PingsForMe() {
+  const me = useMe()
+  const [rows, setRows] = useState([])
+  useEffect(() => {
+    if (!me) return
+    listAll('pings', { ascending: false }).then(all => {
+      const cutoff = Date.now() - 48 * 3600 * 1000
+      setRows(all.filter(p => new Date(p.created_at).getTime() > cutoff && p.from_name !== me &&
+        ((p.recipients || []).includes('ALL') || (p.recipients || []).includes(me))).slice(0, 6))
+    })
+  }, [me])
+  if (!me || !rows.length) return null
+  return (
+    <>
+      <h3 className="subhead">Pings for you</h3>
+      <div className="card">
+        {rows.map(p => (
+          <div className="ping-row" key={p.id}>
+            <span className="ping-title">{p.title}</span>
+            <span className="ping-body">{p.body}</span>
+            <span className="card-meta">{fmtDate(p.created_at)}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}
+
 export default function Dashboard() {
-  const [stats, setStats] = useState({ blinkit: 0, maint: 0, plans: 0, washer: 'Free' })
+  const [stats, setStats] = useState({ blinkit: 0, maint: 0, plans: 0 })
+  const [openReq, setOpenReq] = useState(0)
 
   useEffect(() => {
     (async () => {
-      const [blinkit, maint, plans, washer] = await Promise.all([
-        listAll('blinkit_orders'), listAll('maintenance_requests'),
-        listAll('plans'), listAll('washer_log'),
+      const [blinkit, maint, plans] = await Promise.all([
+        listAll('blinkit_orders'), listAll('maintenance_requests'), listAll('plans'),
       ])
-      const openBlinkit = blinkit.filter(o => !o.done).length
-      const openMaint = maint.filter(m => !m.resolved).length
       const today = new Date().toDateString()
-      const todayPlans = plans.filter(p => new Date(p.created_at).toDateString() === today).length
-      const busy = washer.length && !washer[washer.length - 1].done
-      setStats({ blinkit: openBlinkit, maint: openMaint, plans: todayPlans, washer: busy ? 'In use' : 'Free' })
+      setStats({
+        blinkit: blinkit.filter(o => !o.done).length,
+        maint: maint.filter(m => !m.resolved).length,
+        plans: plans.filter(p => new Date(p.created_at).toDateString() === today).length,
+      })
     })()
   }, [])
 
   return (
     <div>
-      <SectionHead title="Floor 4, at a glance" desc="Everything happening on the floor right now — pull any thread from the menu for the full picture." />
+      <SectionHead title="Floor 4, at a glance" desc="Everything happening on the floor right now. Pull any thread from the menu for the full picture." />
       <div className="grid">
         <div className="stat"><div className="n">{stats.blinkit}</div><div className="l">Blinkit orders open</div></div>
-        <div className="stat"><div className="n">{stats.maint}</div><div className="l">Maintenance tickets open</div></div>
+        <div className="stat"><div className="n">{stats.maint}</div><div className="l">Repairs pending</div></div>
         <div className="stat"><div className="n">{stats.plans}</div><div className="l">Plans posted today</div></div>
-        <div className="stat"><div className="n">{stats.washer}</div><div className="l">Washing machine</div></div>
+        <div className="stat"><div className="n">{openReq}</div><div className="l">Front desk requests open</div></div>
       </div>
-      <h3 className="subhead">Meal & water clock</h3>
+      <PingsForMe />
+      <FrontDeskRequests onCount={setOpenReq} />
+      <h3 className="subhead">Mess hours</h3>
       <div className="card"><MealClock compact /></div>
     </div>
   )

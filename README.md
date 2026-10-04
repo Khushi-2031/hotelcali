@@ -1,9 +1,10 @@
 # Hotel Cali
 
-Floor 4's shared hostel management app — duties, Blinkit runs, wake-up calls,
-meal/water clock, maintenance tickets, a floor fund, content drop, washing
-machine queue, plans board, SPC requests, song queue, general requests, an HR
-directory, and feedback. Built with React + Vite, backed by Supabase.
+Floor 4's shared hostel management app: front desk requests, guest register,
+plans and moods, Blinkit runs, The Tab (Splitwise-style expense splitting),
+mess hours, water log and chhota runs, wake-up calls, repairs, a speaker queue,
+postcard photo and video uploads, the SPC desk, feedback and admin alerts.
+Built with React + Vite, backed by Supabase, with push notifications via OneSignal.
 
 ## 1. Create the Supabase project
 
@@ -51,9 +52,24 @@ hotel-cali/
 └─ .env.example
 ```
 
-## A note on the "Floor Fund"
+## Targeted notifications and new features (migration 002)
 
-The fund tracker logs who paid how much into shared floor purchases (₹800 /
-₹2000 presets, editable) with a bar chart of contributions per person — it's
-built to make splitting costs easy. It's intentionally **not** a personal
-consumption tracker or leaderboard.
+Pings can go to specific people or to everyone. Each phone picks its name once
+("Who's checking in?"), and the app links that device to the person in
+OneSignal (`OneSignal.login`), so the edge function can target them.
+
+One-time setup:
+
+1. **Run the migration.** Supabase > SQL Editor > New query, paste
+   [`supabase/migrations/002_pings_tab_uploads.sql`](./supabase/migrations/002_pings_tab_uploads.sql),
+   run it. It only adds tables, columns and the `postcards` storage bucket.
+2. **Redeploy the edge function:** `supabase functions deploy notify-critical`
+3. **Add a webhook:** Database > Webhooks > Create: table `pings`, event
+   `INSERT`, type Supabase Edge Function, function `notify-critical`.
+4. **Optional, postcard emails:** add secrets `RESEND_API_KEY` and
+   `ADMIN_EMAIL`, then another webhook on `content_posts` INSERT to the same
+   function. Without these, uploads still show up in the app and in
+   Storage > postcards.
+
+Uploaded postcards live in a public storage bucket (unguessable file paths).
+Files are capped at 50 MB, the Supabase free tier limit.
