@@ -30,7 +30,7 @@ export default function FloorFund() {
   return (
     <div>
       <SectionHead
-        title="Floor fund"
+        title="Tip Jar"
         desc={<>Log a pooled purchase and who fronted the cash, so splitting later isn't a guessing game. Packet sizes default to ₹800 / ₹2000 but the amount is always editable.
           <br /><br /><em style={{ color: 'var(--text-lo)' }}>This tracks money contributed to shared floor purchases, not a personal usage log — it's about splitting costs fairly rather than ranking anyone's consumption.</em></>}
       />

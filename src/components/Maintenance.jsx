@@ -5,7 +5,7 @@ export default function Maintenance() {
   return (
     <ListModule
       table="maintenance_requests"
-      title="Maintenance requests"
+      title="Repairs"
       desc="Water cooler, electrical faults, sockets, fixtures — anything floor- or room-related. The urgency meter helps the maintenance liaison triage."
       fields={[
         { name: 'name', label: 'Your name', type: 'select', options: ALL_PEOPLE },

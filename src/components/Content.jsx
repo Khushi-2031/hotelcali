@@ -5,7 +5,7 @@ export default function Content() {
   return (
     <ListModule
       table="content_posts"
-      title="Content drop for the cohort page"
+      title="Postcards"
       desc="This can't host photo/video files directly — drop a caption plus a link (Drive, Photos, wherever it's uploaded) and whoever runs the Instagram page can pull from here."
       fields={[
         { name: 'name', label: 'Your name', type: 'select', options: ALL_PEOPLE },

@@ -25,7 +25,7 @@ export default function Meals() {
 
   return (
     <div>
-      <SectionHead title="Meals & water reminders" desc="Fixed windows for the mess, plus a running floor water tally — no one has to remember to drink water alone." />
+      <SectionHead title="Mess & Water" desc="Fixed windows for the mess, plus a running floor water tally — no one has to remember to drink water alone." />
       <div className="card">
         <MealClock />
         <div style={{ marginTop: 16 }}>

@@ -4,8 +4,8 @@
   "description": "Floor 4's shared hostel management app",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0E1526",
-  "theme_color": "#E23B4E",
+  "background_color": "#FFF3E8",
+  "theme_color": "#FF2E88",
   "icons": [
     {
       "src": "/icon.svg",

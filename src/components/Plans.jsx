@@ -36,7 +36,7 @@ export default function Plans() {
 
   return (
     <div>
-      <SectionHead title="Plans & moods" desc="Post what you're up for and see who else joins in — drinks, cards, a movie, an outing, or just company while you chill." />
+      <SectionHead title="Plans & Moods" desc="Post what you're up for and see who else joins in — drinks, cards, a movie, an outing, or just company while you chill." />
       <form className="inline-form" onSubmit={submit}>
         <div className="form-row">
           <div>
