@@ -10,6 +10,9 @@
 //
 // Secrets (Edge Functions > Secrets):
 //   ONESIGNAL_APP_ID, ONESIGNAL_REST_API_KEY            required
+//     (the key is an App API Key from OneSignal > Settings > Keys & IDs > Add Key, starts with os_v2_app_)
+//   ONESIGNAL_ALL_SEGMENT                               optional, segment used for "everyone"
+//     (defaults to "Subscribed Users"; newer apps may call it "Total Subscriptions")
 //   RESEND_API_KEY, ADMIN_EMAIL                         optional, only for postcard emails
 
 const slug = (s: string) =>
@@ -19,13 +22,17 @@ async function push({ heading, body, recipients }: { heading: string; body: stri
   const appId = Deno.env.get('ONESIGNAL_APP_ID')
   const restKey = Deno.env.get('ONESIGNAL_REST_API_KEY')
 
+  const allSegment = Deno.env.get('ONESIGNAL_ALL_SEGMENT') || 'Subscribed Users'
+  // New App API Keys (os_v2_...) use "Key", older REST keys used "Basic".
+  const auth = restKey?.startsWith('os_v2') ? `Key ${restKey}` : `Basic ${restKey}`
+
   const target = recipients === 'ALL'
-    ? { included_segments: ['Subscribed Users'] }
+    ? { included_segments: [allSegment] }
     : { include_aliases: { external_id: recipients.map(slug) }, target_channel: 'push' }
 
-  const res = await fetch('https://onesignal.com/api/v1/notifications', {
+  const res = await fetch('https://api.onesignal.com/notifications?c=push', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Basic ${restKey}` },
+    headers: { 'Content-Type': 'application/json', 'Authorization': auth },
     body: JSON.stringify({
       app_id: appId,
       ...target,
