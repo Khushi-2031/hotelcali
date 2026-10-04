@@ -5,7 +5,7 @@ export default function Blinkit() {
   return (
     <ListModule
       table="blinkit_orders"
-      title="Collective Blinkit orders"
+      title="Room Service"
       desc="Drop what you need into the current run — one or two floor-wide orders go out each day. Mark it received once it lands."
       fields={[
         { name: 'name', label: 'Your name', type: 'select', options: ALL_PEOPLE },

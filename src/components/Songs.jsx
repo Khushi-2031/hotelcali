@@ -5,7 +5,7 @@ export default function Songs() {
   return (
     <ListModule
       table="song_queue"
-      title="Speaker queue"
+      title="Jukebox"
       desc="Recommend what should play on the floor speaker next."
       fields={[
         { name: 'name', label: 'Your name', type: 'select', options: ALL_PEOPLE },

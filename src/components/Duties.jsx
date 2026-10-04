@@ -47,7 +47,7 @@ export default function Duties() {
 
   return (
     <div>
-      <SectionHead title="Weekly duties" desc="Duties rotate automatically every week across everyone on the floor. Mark yours done to earn points — see the reward system below." />
+      <SectionHead title="Housekeeping" desc="Duties rotate automatically every week across everyone on the floor. Mark yours done to earn points — see the reward system below." />
       <div className="roster-week">
         <Pill tone="blue">Week {wIdx + 1}</Pill>
         <span className="card-meta">Rotation started {new Date(anchor).toLocaleDateString()}</span>

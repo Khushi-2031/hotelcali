@@ -28,7 +28,7 @@ export default function Washer() {
 
   return (
     <div>
-      <SectionHead title="Washing machine" desc="Claim it when you start a load, free it up when you're done — so no one shows up to a machine mid-cycle." />
+      <SectionHead title="Laundromat" desc="Claim it when you start a load, free it up when you're done — so no one shows up to a machine mid-cycle." />
       <div className="card">
         <div className="card-top">
           <span className="card-title">{busy ? `In use — ${current.name}` : 'Free'}</span>

@@ -5,7 +5,7 @@ export default function Requests() {
   return (
     <ListModule
       table="general_requests"
-      title="Other requests & complaints"
+      title="Suggestion Box"
       desc="Anything that doesn't fit elsewhere — single room requests, roommate swaps, general floor complaints."
       fields={[
         { name: 'name', label: 'Your name', type: 'select', options: ALL_PEOPLE },

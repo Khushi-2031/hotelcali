@@ -5,7 +5,7 @@ export default function Spc() {
   return (
     <ListModule
       table="spc_requests"
-      title="SPC requests"
+      title="SPC Desk"
       desc="Anything that needs Vismay or Simran's attention as the floor's SPC reps."
       fields={[
         { name: 'name', label: 'Your name', type: 'select', options: ALL_PEOPLE },

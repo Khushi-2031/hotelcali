@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import Sidebar, { SECTIONS } from './components/Sidebar'
+import Sidebar, { SECTIONS, TabBar, NeonSign } from './components/Sidebar'
 import CriticalBanner from './components/CriticalBanner'
 import Toast from './components/Toast'
 import Dashboard from './components/Dashboard'
@@ -49,22 +49,29 @@ export default function App() {
   function select(id) {
     setActive(id)
     location.hash = id
+    window.scrollTo(0, 0)
   }
 
   const Screen = SCREENS[active]
+  const section = SECTIONS.find(s => s.id === active)
 
   return (
-    <div id="app">
+    <div id="app" className={`tone-${section?.tone || 'pink'}`}>
       <Sidebar active={active} onSelect={select} />
       <div id="main">
+        <div className="awning" aria-hidden="true" />
         <CriticalBanner refreshKey={bannerKey} />
-        <div style={{ padding: '10px 40px 0' }}>
-          <button className="btn ghost small" onClick={askForPushPermission}>Enable notifications on this device</button>
-        </div>
+        {active === 'dashboard' && (
+          <div className="hero-sign">
+            <NeonSign />
+          </div>
+        )}
         <div id="content">
           <Screen onChange={() => setBannerKey(k => k + 1)} />
+          <button className="btn ghost small notify-btn" onClick={askForPushPermission}>Enable notifications on this device</button>
         </div>
       </div>
+      <TabBar active={active} onSelect={select} />
       <Toast />
     </div>
   )

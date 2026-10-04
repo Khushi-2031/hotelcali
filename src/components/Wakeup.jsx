@@ -31,7 +31,7 @@ export default function Wakeup({ onChange }) {
 
   return (
     <div>
-      <SectionHead title="Wake-up calls" desc={'Ask the floor to wake you at a specific time. Flag "grade-cut situation" and it jumps to the top as a critical alert for everyone.'} />
+      <SectionHead title="Wake-up Calls" desc={'Ask the floor to wake you at a specific time. Flag "grade-cut situation" and it jumps to the top as a critical alert for everyone.'} />
       <form className="inline-form" onSubmit={submit}>
         <div className="form-row">
           <div>

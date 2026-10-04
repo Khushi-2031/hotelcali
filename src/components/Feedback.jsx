@@ -4,7 +4,7 @@ export default function Feedback() {
   return (
     <ListModule
       table="feedback"
-      title="Feedback on the app"
+      title="Feedback"
       desc="Found a bug, want a feature, or just have a review of how this is working out — drop it here."
       fields={[
         { name: 'name', label: 'Your name (optional)', type: 'text', placeholder: 'anonymous is fine' },

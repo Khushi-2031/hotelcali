@@ -13,6 +13,7 @@ export function Empty({ children }) {
 export function SectionHead({ title, desc }) {
   return (
     <div className="section-head">
+      <p className="section-kicker">Hotel Cali</p>
       <h2>{title}</h2>
       <p>{desc}</p>
     </div>
