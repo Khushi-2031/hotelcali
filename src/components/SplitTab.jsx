@@ -31,19 +31,19 @@ export default function SplitTab() {
     await insertRow('settlements', { from_name: d.from, to_name: d.to, amount: d.amount, created_by: me })
     await sendPing({
       from: me, recipients: [d.from === me ? d.to : d.from], kind: 'tab',
-      title: 'The Tab', body: `${firstName(d.from)} paid ${firstName(d.to)} ${fmtINR(d.amount)}. Marked as settled.`,
+      title: 'Settle Up', body: `${firstName(d.from)} paid ${firstName(d.to)} ${fmtINR(d.amount)}. Marked as settled.`,
     })
     pushToast('Settled up')
     load()
   }
 
   async function remind(d) {
-    await sendPing({ from: me, recipients: [d.from], kind: 'tab', title: 'The Tab', body: `Friendly nudge: you owe ${firstName(d.to)} ${fmtINR(d.amount)}.` })
+    await sendPing({ from: me, recipients: [d.from], kind: 'tab', title: 'Settle Up', body: `Friendly nudge: you owe ${firstName(d.to)} ${fmtINR(d.amount)}.` })
     pushToast(`Nudged ${firstName(d.from)}`)
   }
 
   async function remove(table, id) {
-    if (!confirm('Delete this from The Tab for everyone?')) return
+    if (!confirm('Delete this from Settle Up for everyone?')) return
     await deleteRow(table, id)
     load()
   }
@@ -55,7 +55,7 @@ export default function SplitTab() {
 
   return (
     <div>
-      <SectionHead title="The Tab" desc="Splitwise for the floor. Log who paid and who it's split with, and the app works out who owes whom in the fewest payments." />
+      <SectionHead title="Settle Up" desc="Splitwise for the floor. Log who paid and who it's split with, and the app works out who owes whom in the fewest payments." />
 
       <div className={`card tab-summary ${myNet > 0 ? 'owed' : myNet < 0 ? 'owes' : ''}`}>
         {!me ? (
@@ -177,10 +177,10 @@ function ExpenseForm({ me, onDone }) {
     await insertRow('expenses', { description: desc.trim(), amount: Number(amount), paid_by: paidBy, split_type: type, shares, created_by: me })
     const others = Object.keys(shares).filter(p => p !== me)
     await Promise.all(others.map(p => sendPing({
-      from: me, recipients: [p], kind: 'tab', title: 'The Tab',
+      from: me, recipients: [p], kind: 'tab', title: 'Settle Up',
       body: `${firstName(me || paidBy)} added "${desc.trim()}" (${fmtINR(amount)}). ${p === paidBy ? `You paid, you get back ${fmtINR(Number(amount) - (shares[p] || 0))}.` : `Your share: ${fmtINR(shares[p])}.`}`,
     })))
-    pushToast('Added to The Tab')
+    pushToast('Added to Settle Up')
     onDone()
   }
 
@@ -242,7 +242,7 @@ function PaymentForm({ me, onDone }) {
     if (!(Number(amount) > 0) || from === to) return
     await insertRow('settlements', { from_name: from, to_name: to, amount: Number(amount), created_by: me })
     const other = from === me ? to : from
-    await sendPing({ from: me, recipients: [other], kind: 'tab', title: 'The Tab', body: `${firstName(from)} paid ${firstName(to)} ${fmtINR(amount)}.` })
+    await sendPing({ from: me, recipients: [other], kind: 'tab', title: 'Settle Up', body: `${firstName(from)} paid ${firstName(to)} ${fmtINR(amount)}.` })
     pushToast('Payment recorded')
     onDone()
   }

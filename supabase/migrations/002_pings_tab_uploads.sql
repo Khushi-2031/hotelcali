@@ -1,5 +1,5 @@
 -- Hotel Cali: migration 002
--- Adds targeted pings, front desk requests, chhota runs, The Tab (expense splitting),
+-- Adds targeted pings, front desk requests, chhota runs, Settle Up (expense splitting),
 -- SPC broadcasts and postcard uploads.
 -- Safe to run on the live database: it only adds things, nothing is dropped.
 -- Run it once in Supabase > SQL Editor > New query.

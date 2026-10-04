@@ -1,4 +1,4 @@
-// Splitwise-style maths for The Tab. Everything is done in paise (integers)
+// Splitwise-style maths for Settle Up. Everything is done in paise (integers)
 // so totals never drift from floating point rounding.
 
 export const toPaise = (rupees) => Math.round(Number(rupees || 0) * 100)

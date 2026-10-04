@@ -316,7 +316,7 @@ th{color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.06em;text-t
 .inline-ask{display:flex;gap:8px;margin-top:10px;}
 .inline-ask input{flex:1;min-height:44px;padding:8px 12px;}
 
-/* The Tab */
+/* Settle Up */
 .tab-summary{text-align:center;padding:22px 18px;}
 .tab-summary.owed{border:2.5px solid var(--mint);box-shadow:0 0 0 4px var(--mint-pale),0 0 22px rgba(70,217,160,.35);}
 .tab-summary.owes{border:2.5px solid var(--pink);box-shadow:0 0 0 4px var(--pink-tint),0 0 22px rgba(255,46,136,.3);}

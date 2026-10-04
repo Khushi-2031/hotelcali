@@ -7,7 +7,7 @@ export const SECTIONS = [
   { id: 'hr', label: 'Guest Register', sub: "Who's in which room", tone: 'aqua' },
   { id: 'plans', label: 'Plans & Moods', sub: "Tonight's board", tone: 'violet' },
   { id: 'blinkit', label: 'Room Service', sub: 'Blinkit orders', tone: 'sun' },
-  { id: 'split', label: 'The Tab', sub: 'Split expenses', tone: 'mint' },
+  { id: 'split', label: 'Settle Up', sub: 'Split expenses', tone: 'mint' },
   { id: 'meals', label: 'Mess & Water', sub: 'Meals, water, chhota runs', tone: 'aqua' },
   { id: 'wakeup', label: 'Wake-up Calls', sub: 'Get knocked on time', tone: 'pink' },
   { id: 'maintenance', label: 'Repairs', sub: 'Maintenance tickets', tone: 'sun' },

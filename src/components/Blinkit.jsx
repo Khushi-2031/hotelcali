@@ -41,7 +41,7 @@ function OrderingNow({ go }) {
       <NotifyPicker label="Who to ping" value={to} onChange={setTo} exclude={me ? [me] : []} />
       <button className="btn" type="submit" disabled={!to.length}>{sent ? 'Pinged!' : 'Ping them'}</button>
       <p className="form-hint" style={{ marginTop: 14 }}>
-        Splitting the bill? <button type="button" className="link-btn" onClick={() => go && go('split')}>Log it on The Tab</button>
+        Splitting the bill? <button type="button" className="link-btn" onClick={() => go && go('split')}>Log it in Settle Up</button>
       </p>
     </form>
   )
