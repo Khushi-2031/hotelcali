@@ -50,3 +50,20 @@ export async function sendPing({ from, recipients, title, body, kind = 'general'
   })
   if (error) console.error('pings', error)
 }
+
+/**
+ * PINs live in a locked table that only these database functions can touch.
+ * Returns { ok, missing } where missing=true means the PIN feature isn't set up
+ * in Supabase yet (migration 004 not run), so check-in carries on without it.
+ */
+async function rpc(fn, args) {
+  const { data, error } = await supabase.rpc(fn, args)
+  if (error) {
+    const missing = error.code === 'PGRST202' || /function .* does not exist|Could not find the function/i.test(error.message || '')
+    return { ok: false, missing, error }
+  }
+  return { ok: true, data }
+}
+export const hasPin = (name) => rpc('has_pin', { p_name: name })
+export const setPin = (name, pin) => rpc('set_pin', { p_name: name, p_pin: pin })
+export const checkPin = (name, pin) => rpc('check_pin', { p_name: name, p_pin: pin })

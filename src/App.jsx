@@ -14,9 +14,9 @@ import Spc from './components/Spc'
 import Songs from './components/Songs'
 import HR from './components/HR'
 import Feedback from './components/Feedback'
-import { CheckIn, CheckedInLine, NotifyButton } from './components/People'
+import { CheckIn, CheckedInLine, NotifyButton, PinGate } from './components/People'
 import { initOneSignal } from './onesignal'
-import { useMe } from './identity'
+import { useMe, pinVerified } from './identity'
 import AdminAlert from './components/AdminAlert'
 import Calendar from './components/Calendar'
 import SleepLog from './components/SleepLog'
@@ -55,6 +55,7 @@ export default function App() {
   }
 
   if (!me) return <CheckIn />
+  if (!pinVerified()) return <PinGate />
 
   const Screen = SCREENS[active]
   const section = SECTIONS.find(s => s.id === active)
