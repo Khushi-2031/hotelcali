@@ -521,3 +521,15 @@ th{color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.06em;text-t
 .is-guest .ping-x,
 .is-guest #content .btn:not(.day-nav .btn){display:none !important;}
 .repeat-box{margin-top:12px;padding:14px;border-radius:16px;background:var(--mint-tint);border:1.5px solid var(--mint-pale);}
+
+/* Mess menu (Front Desk) */
+.mess-days{margin-top:0;}
+.mess-meals{display:flex;gap:4px;margin:12px 0 8px;border-bottom:1px solid var(--line);}
+.mess-meal{background:none;border:none;border-bottom:3px solid transparent;padding:8px 10px;min-height:40px;font-weight:700;font-size:13.5px;color:var(--muted);cursor:pointer;margin-bottom:-1px;}
+.mess-meal.on{color:var(--ink);border-bottom-color:var(--pink);}
+.mess-meal:focus-visible{outline:2px solid var(--pink);outline-offset:2px;}
+.mess-items{list-style:none;margin:4px 0 10px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:2px 14px;font-size:14px;line-height:1.7;}
+.mess-items li.nonveg{color:var(--red-deep);font-weight:700;}
+.mess-items li.dessert{font-weight:700;}
+.mess-items small{color:var(--muted);font-weight:600;font-size:12px;}
+.mess-note{background:var(--pink-tint);border-left:3px solid var(--pink);padding:6px 10px;font-size:13px;margin-bottom:6px;border-radius:4px;}
