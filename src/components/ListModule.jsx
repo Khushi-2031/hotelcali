@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { listAll, insertRow, updateRow } from '../api'
-import { SectionHead, Pill, Empty, fmtDate } from './ui'
+import { listAll, insertRow, updateRow, deleteRow } from '../api'
+import { SectionHead, Pill, Empty, fmtDate, RemoveMine } from './ui'
 import { pushToast } from './Toast'
 import { useMe } from '../identity'
 import { PostingAs } from './People'
@@ -94,6 +94,7 @@ export default function ListModule({ table, title, desc, fields, renderCard, res
                 ? <div style={{ marginTop: 8 }}><Pill tone="teal">{doneLabel}</Pill></div>
                 : <button className="btn small ghost" style={{ marginTop: 8 }} onClick={() => resolve(row)}>{resolveLabel}</button>
             )}
+            {me && row.name === me && <div><RemoveMine onRemove={async () => { await deleteRow(table, row.id); load() }} /></div>}
           </div>
         )
       }) : <Empty>Nothing here yet. Be the first to post.</Empty>}

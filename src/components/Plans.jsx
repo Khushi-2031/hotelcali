@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { listAll, insertRow, updateRow } from '../api'
+import { listAll, insertRow, updateRow, deleteRow } from '../api'
 import { useMe } from '../identity'
 import { PostingAs } from './People'
-import { SectionHead, Empty } from './ui'
+import { SectionHead, Empty, RemoveMine } from './ui'
 import { pushToast } from './Toast'
 
 const OTHER = 'Different mood'
-const MOODS = ['Drinks', 'Smoking up', 'Board / card games', 'Going out', 'Movie night', 'Chilling alone', 'Open to company', OTHER]
+const MOODS = ['Drinks', 'Smoking up', 'Board / card games', 'Going out', 'Movie night', 'Chilling alone', 'Open to company', 'Do Not Disturb', OTHER]
 
 export default function Plans() {
   const me = useMe()
@@ -75,6 +75,7 @@ export default function Plans() {
           <button className="btn small ghost" style={{ marginTop: 10 }} onClick={() => plusOne(p)}>
             {me && (p.plus_ones || []).includes(me) ? "You're in" : '+1 me'}
           </button>
+          {p.name === me && <div><RemoveMine onRemove={async () => { await deleteRow('plans', p.id); load() }} /></div>}
         </div>
       )) : <Empty>No plans posted today yet.</Empty>}
     </div>

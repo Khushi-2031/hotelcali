@@ -18,6 +18,9 @@ import { CheckIn, CheckedInLine, NotifyButton } from './components/People'
 import { initOneSignal } from './onesignal'
 import { useMe } from './identity'
 import AdminAlert from './components/AdminAlert'
+import Calendar from './components/Calendar'
+import SleepLog from './components/SleepLog'
+import LobbyBell from './components/LobbyBell'
 
 const SCREENS = {
   dashboard: Dashboard,
@@ -33,6 +36,8 @@ const SCREENS = {
   songs: Songs,
   hr: HR,
   feedback: Feedback,
+  calendar: Calendar,
+  sleep: SleepLog,
 }
 
 export default function App() {
@@ -73,6 +78,7 @@ export default function App() {
       </div>
       <TabBar active={active} onSelect={select} />
       <Toast />
+      <LobbyBell />
     </div>
   )
 }

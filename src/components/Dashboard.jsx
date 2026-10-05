@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { listAll, insertRow, updateRow, sendPing } from '../api'
+import { listAll, insertRow, updateRow, deleteRow, sendPing } from '../api'
 import { useMe, firstName } from '../identity'
-import { SectionHead, Empty, fmtDate } from './ui'
+import { SectionHead, Empty, fmtDate, RemoveMine } from './ui'
 import { pushToast } from './Toast'
 import MealClock from './MealClock'
+import DailyMood from './DailyMood'
+import TodayAtMica from './TodayAtMica'
 
 const PRESETS = [
   'Pick up my clothes from the washing machine',
@@ -75,31 +77,51 @@ function FrontDeskRequests({ onCount }) {
               {(r.name === me || r.claimed_by === me) && <button className="btn small ghost" onClick={() => done(r)}>Mark done</button>}
             </div>
           )}
+          {r.name === me && <div><RemoveMine onRemove={async () => { await deleteRow('front_desk_requests', r.id); load() }} /></div>}
         </div>
       )) : <Empty>No open requests. Quiet night at the front desk.</Empty>}
     </>
   )
 }
 
+const HIDDEN_KEY = 'hc_hidden_pings'
+function readHidden() { try { return JSON.parse(localStorage.getItem(HIDDEN_KEY) || '[]') } catch { return [] } }
+
 function PingsForMe() {
   const me = useMe()
   const [rows, setRows] = useState([])
+  const [hidden, setHidden] = useState(readHidden())
+
   useEffect(() => {
     if (!me) return
     listAll('pings', { ascending: false }).then(all => {
       const cutoff = Date.now() - 48 * 3600 * 1000
       setRows(all.filter(p => new Date(p.created_at).getTime() > cutoff && p.from_name !== me &&
-        ((p.recipients || []).includes('ALL') || (p.recipients || []).includes(me))).slice(0, 6))
+        ((p.recipients || []).includes('ALL') || (p.recipients || []).includes(me))))
     })
   }, [me])
-  if (!me || !rows.length) return null
+
+  function hide(ids) {
+    const next = [...new Set([...hidden, ...ids])].slice(-300)
+    setHidden(next)
+    try { localStorage.setItem(HIDDEN_KEY, JSON.stringify(next)) } catch { /* ignore */ }
+  }
+
+  const visible = rows.filter(p => !hidden.includes(p.id)).slice(0, 6)
+  if (!me || !visible.length) return null
   return (
     <>
-      <h3 className="subhead">Pings for you</h3>
+      <div className="subhead-row">
+        <h3 className="subhead">Pings for you</h3>
+        <button className="link-btn" onClick={() => hide(visible.map(p => p.id))}>Clear all</button>
+      </div>
       <div className="card">
-        {rows.map(p => (
+        {visible.map(p => (
           <div className="ping-row" key={p.id}>
-            <span className="ping-title">{p.title}</span>
+            <div className="ping-top">
+              <span className="ping-title">{p.title}</span>
+              <button className="ping-x" aria-label="Clear this ping" onClick={() => hide([p.id])}>×</button>
+            </div>
             <span className="ping-body">{p.body}</span>
             <span className="card-meta">{fmtDate(p.created_at)}</span>
           </div>
@@ -136,6 +158,8 @@ export default function Dashboard() {
         <div className="stat"><div className="n">{stats.plans}</div><div className="l">Plans posted today</div></div>
         <div className="stat"><div className="n">{openReq}</div><div className="l">Front desk requests open</div></div>
       </div>
+      <DailyMood />
+      <TodayAtMica />
       <PingsForMe />
       <FrontDeskRequests onCount={setOpenReq} />
       <h3 className="subhead">Mess hours</h3>

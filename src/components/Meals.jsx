@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
-import { listAll, insertRow, updateRow, sendPing } from '../api'
+import { listAll, insertRow, updateRow, deleteRow, sendPing } from '../api'
 import { useMe, firstName } from '../identity'
-import { SectionHead, Empty, fmtDate } from './ui'
+import { SectionHead, Empty, fmtDate, RemoveMine } from './ui'
 import { NotifyPicker } from './People'
 import { pushToast } from './Toast'
 import MealClock from './MealClock'
 
-const SPOTS = ['Canteen', 'Amul parlour', 'Main gate', 'Stationery shop', 'Chai tapri']
+const SPOTS = ['Chhota canteen', 'MICAfe', 'Main gate', 'Stationery shop', 'Chai tapri outside']
 
 function ChhotaRun() {
   const me = useMe()
@@ -30,7 +30,7 @@ function ChhotaRun() {
     await insertRow('chhota_runs', { name: me, destination: dest, note, recipients: to })
     await sendPing({
       from: me, recipients: to, kind: 'chhota', title: 'Chhota run?',
-      body: `${firstName(me)} is heading to the ${dest.toLowerCase()}. Want anything?${note.trim() ? ' ' + note.trim() : ''}`,
+      body: `${firstName(me)} is heading to ${dest}. Want anything?${note.trim() ? ' ' + note.trim() : ''}`,
     })
     pushToast(to.length ? 'Run posted and pinged' : 'Run posted')
     setNote(''); setTo([])
@@ -77,6 +77,7 @@ function ChhotaRun() {
               <button className="btn small ghost" type="button" onClick={() => ask(r)}>Ask</button>
             </div>
           )}
+          {r.name === me && <div><RemoveMine onRemove={async () => { await deleteRow('chhota_runs', r.id); load() }} /></div>}
         </div>
       )) : <Empty>No runs going right now.</Empty>}
     </>
@@ -104,7 +105,7 @@ export default function Meals() {
 
   return (
     <div>
-      <SectionHead title="Mess & Water" desc="Mess timings, a running floor water tally, and chhota runs to the canteen or gate." />
+      <SectionHead title="Meal Plans" desc="Mess timings, a running floor water tally, and chhota runs to the canteen, MICAfe or the chai tapri." />
       <div className="card">
         <MealClock />
         <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>

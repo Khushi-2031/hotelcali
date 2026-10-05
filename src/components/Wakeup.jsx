@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { listAll, insertRow, sendPing } from '../api'
-import { SectionHead, Pill, Empty } from './ui'
+import { listAll, insertRow, deleteRow, sendPing } from '../api'
+import { SectionHead, Pill, Empty, RemoveMine } from './ui'
 import { pushToast } from './Toast'
 import { NotifyPicker, PostingAs } from './People'
 import { useMe, useRoom, firstName } from '../identity'
@@ -72,6 +72,7 @@ export default function Wakeup({ onChange }) {
           </div>
           <div className="card-meta">Wake at {new Date(w.wake_at).toLocaleString()}</div>
           {w.notes && <div className="card-body">{w.notes}</div>}
+          {w.name === me && <RemoveMine onRemove={async () => { await deleteRow('wakeup_calls', w.id); load() }} />}
         </div>
       )) : <Empty>No wake-up calls scheduled.</Empty>}
     </div>
