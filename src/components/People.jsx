@@ -3,6 +3,8 @@ import { ALL_PEOPLE, FLOOR } from '../data/roster'
 import { firstName, setMe, useMe, useRoom, roomOf } from '../identity'
 import { linkDeviceTo, enableNotifications, notificationState } from '../onesignal'
 import { NeonSign } from './Sidebar'
+import { bellOn, setBell, ringBell } from './LobbyBell'
+import { useSchedule, setMySubjects } from '../schedule'
 
 /**
  * Pick who gets pinged. Value is an array of full names, or ['ALL'].
@@ -71,6 +73,9 @@ export function CheckIn() {
   const [step, setStep] = useState(1)
   const [name, setName] = useState('')
   const [room, setRoom] = useState('')
+  const [subs, setSubs] = useState([])
+  const schedule = useSchedule()
+  const allSubjects = schedule?.subjects || []
   const rooms = FLOOR.map(r => r.room)
 
   function pickName(n) {
@@ -85,6 +90,7 @@ export function CheckIn() {
   }
 
   function finish() {
+    if (subs.length) setMySubjects(subs)
     setMe(name, room)
     linkDeviceTo(name)
   }
@@ -112,6 +118,17 @@ export function CheckIn() {
               <option value="">Choose your room</option>
               {rooms.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
+            {allSubjects.length > 0 && (
+              <>
+                <label>Your subjects this term</label>
+                <div className="np-chips">
+                  {allSubjects.map(x => (
+                    <button key={x} type="button" className={`np-chip ${subs.includes(x) ? 'on' : ''}`} aria-pressed={subs.includes(x)}
+                      onClick={() => setSubs(v => v.includes(x) ? v.filter(y => y !== x) : [...v, x])}>{x}</button>
+                  ))}
+                </div>
+              </>
+            )}
             <button className="btn checkin-btn" type="submit" disabled={!name || !room}>Check in</button>
           </form>
         ) : (
@@ -132,10 +149,17 @@ export function CheckIn() {
 export function CheckedInLine() {
   const me = useMe()
   const room = useRoom()
+  const [bell, setBellState] = useState(bellOn())
   if (!me) return null
+  function toggleBell() {
+    const next = !bell
+    setBell(next); setBellState(next)
+    if (next) ringBell()
+  }
   return (
     <div className="whoami-line">
       <span>Checked in as <strong>{firstName(me)}</strong> · Room {room}</span>
+      <button type="button" className="link-btn" onClick={toggleBell} aria-pressed={bell}>Bell {bell ? 'on' : 'off'}</button>
       <button type="button" className="link-btn" onClick={() => { if (confirm('Check out and check in as someone else?')) setMe(null) }}>Not you?</button>
     </div>
   )

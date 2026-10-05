@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import ListModule, { fmtDate, Pill } from './ListModule'
 import { ALL_PEOPLE } from '../data/roster'
-import { listAll, insertRow, sendPing } from '../api'
+import { listAll, insertRow, deleteRow, sendPing } from '../api'
 import { useMe, firstName, SPC_REPS } from '../identity'
-import { SectionHead, Empty } from './ui'
+import { SectionHead, Empty, RemoveMine } from './ui'
 import { NotifyPicker } from './People'
 import { pushToast } from './Toast'
 
@@ -51,6 +51,7 @@ function FromSpc() {
             <Pill tone="blue">{(r.recipients || []).includes('ALL') ? 'Everyone' : 'For you'}</Pill>
           </div>
           <div className="card-meta">{r.name} · {fmtDate(r.created_at)}{isRep && !(r.recipients || []).includes('ALL') ? ` · to ${(r.recipients || []).map(firstName).join(', ')}` : ''}</div>
+          {r.name === me && <RemoveMine onRemove={async () => { await deleteRow('spc_broadcasts', r.id); load() }} />}
         </div>
       )) : <Empty>Nothing from the SPC reps yet.</Empty>}
     </>

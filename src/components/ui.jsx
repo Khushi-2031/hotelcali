@@ -25,3 +25,14 @@ export function fmtDate(ts) {
   return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) +
     ' · ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
 }
+
+/**
+ * "Remove" button shown only on things you posted yourself.
+ */
+export function RemoveMine({ onRemove, label = 'Remove' }) {
+  async function go() {
+    if (!confirm('Remove this for everyone?')) return
+    await onRemove()
+  }
+  return <button type="button" className="link-btn danger remove-mine" onClick={go}>{label}</button>
+}
