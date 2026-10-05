@@ -80,4 +80,7 @@ export function useRoom() {
   return me ? getRoom() : ''
 }
 
+export const ADMINS = ['Khushi Vaswani']
+export const isAdmin = (name) => ADMINS.includes(name)
+
 export const SPC_REPS = ['Vismay Bhatt', 'Simran Gupta']

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMe, isGuest, GUEST_HIDDEN } from '../identity'
+import { useMe, isGuest, isAdmin, GUEST_HIDDEN } from '../identity'
 
 // `label` is the motel name shown in the UI, `sub` is the plain-English name
 // so nobody has to decode the theme to find a feature.
@@ -19,7 +19,13 @@ export const SECTIONS = [
   { id: 'spc', label: 'SPC Desk', sub: 'From and to the SPC reps', tone: 'sun' },
   { id: 'feedback', label: 'Feedback', sub: 'Tell us about the app', tone: 'violet' },
   { id: 'alert', label: 'Admin Alert', sub: 'Ping the whole floor', tone: 'red' },
+  { id: 'activity', label: 'Activity Log', sub: 'Who used what (only you)', tone: 'violet', admin: true },
 ]
+
+// What this person is allowed to see in the menus.
+export function visibleSections(me) {
+  return SECTIONS.filter(s => !(s.admin && !isAdmin(me)) && !(isGuest(me) && GUEST_HIDDEN.includes(s.id)))
+}
 
 export const sectionById = (id) => SECTIONS.find(s => s.id === id) || SECTIONS[0]
 
@@ -53,7 +59,7 @@ export function NeonSign({ small }) {
 // Desktop: a full sidebar listing every section.
 export default function Sidebar({ active, onSelect }) {
   const me = useMe()
-  const list = isGuest(me) ? SECTIONS.filter(s => !GUEST_HIDDEN.includes(s.id)) : SECTIONS
+  const list = visibleSections(me)
   return (
     <aside id="sidebar">
       <div id="brand"><NeonSign small /></div>
@@ -98,7 +104,7 @@ export function TabBar({ active, onSelect }) {
               <button className="btn ghost small" onClick={() => setOpen(false)}>Close</button>
             </div>
             <div className="directory">
-              {SECTIONS.filter(s => !TABS.includes(s.id) && !(isGuest(me) && GUEST_HIDDEN.includes(s.id))).map(s => (
+              {visibleSections(me).filter(s => !TABS.includes(s.id)).map(s => (
                 <button key={s.id} className={`dir-tile tone-${s.tone} ${active === s.id ? 'active' : ''}`} onClick={() => go(s.id)}>
                   <span className="dir-dot" />
                   <span className="dir-label">{s.label}</span>
