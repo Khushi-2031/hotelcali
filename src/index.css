@@ -494,3 +494,30 @@ th{color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.06em;text-t
 .whoami-line{flex-wrap:wrap;row-gap:0;}
 .whoami-line .link-btn{white-space:nowrap;padding:4px 2px;min-height:32px;}
 @media (max-width:520px){.albums,.postcards{grid-template-columns:repeat(2,minmax(0,1fr));}}
+
+/* ---------- Repeat stepper ---------- */
+.stepper{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1.5px solid var(--line-2);border-radius:16px;background:var(--field);padding:4px;min-height:48px;}
+.stepper button{width:44px;height:40px;border:none;border-radius:12px;background:var(--card);font-size:20px;font-weight:800;color:var(--ink);cursor:pointer;}
+.stepper span{font-weight:800;font-size:14px;}
+
+/* ---------- PIN ---------- */
+.pin-input{font-size:28px;letter-spacing:.6em;text-align:center;font-weight:800;}
+.remember{display:flex;gap:10px;align-items:flex-start;margin-top:16px;text-transform:none;letter-spacing:0;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;}
+.remember input{margin-top:2px;flex-shrink:0;}
+
+/* ---------- Guest mode ---------- */
+.guest-link{display:block;margin:4px auto 0;}
+.guest-card{border:2.5px dashed var(--blue);}
+.guest-pw{margin:6px 0 4px;padding:12px 14px;border-radius:14px;background:var(--blue-tint);font-size:15px;}
+.guest-pw strong{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:800;font-size:20px;letter-spacing:.04em;color:var(--blue-deep);margin-left:6px;}
+.guest-badge{font-weight:800;color:var(--blue-deep);background:var(--blue-tint);padding:4px 10px;border-radius:999px;}
+/* Guests are view only: hide everything that posts or changes something. */
+.is-guest #content .inline-form,
+.is-guest .mood-picker,
+.is-guest .inline-ask,
+.is-guest .remove-mine,
+.is-guest .card-actions,
+.is-guest .notify-btn,
+.is-guest .ping-x,
+.is-guest #content .btn:not(.day-nav .btn){display:none !important;}
+.repeat-box{margin-top:12px;padding:14px;border-radius:16px;background:var(--mint-tint);border:1.5px solid var(--mint-pale);}
