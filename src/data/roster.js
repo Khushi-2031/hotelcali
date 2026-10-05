@@ -1,13 +1,13 @@
 export const FLOOR = [
-  { room: '41', people: ['Rik Sengupta', 'Kunal Kumar'] },
+  { room: '41', people: ['Kunal Kumar', 'Rik Sengupta'] },
   { room: '42', people: ['Mrigank Dutta', 'Shreyas Naik'] },
-  { room: '43', people: ['Vismay Bhatt', 'Dev Chowdhary'] },
+  { room: '43', people: ['Dev Choudhary', 'Vismay Bhatt'] },
   { room: '44', people: ['Khushi Vaswani', 'Vatsala Rastogi'] },
-  { room: '45', people: ['Protim Chowdhury', 'Ashraf Khan'] },
-  { room: '46', people: ['Revant Veer Singh', 'Ashwin Bhatt'] },
+  { room: '45', people: ['Protim Choudhary', 'Ashraf Khan'] },
+  { room: '46', people: ['Ashwin Bhatt', 'Revantveer Singh'] },
   { room: '47', people: ['Simran Gupta', 'Supriya Arora'] },
-  { room: '48', people: ['Akshat Jha', 'Shravan Hariharan'] },
-  { room: '49', people: ['Shreyanshu Tiwary', 'Shubham Bijarnia'] },
+  { room: '48', people: ['Shravan Hariharan', 'Akshat Jha'] },
+  { room: '49', people: ['Shubham Bijarnia', 'Shreyanshu Tiwari'] },
   { room: '50', people: ['Himnish Singh'] },
 ]
 
