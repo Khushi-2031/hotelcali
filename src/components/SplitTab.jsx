@@ -45,13 +45,24 @@ export default function SplitTab() {
     pushToast(`Nudged ${firstName(d.from)}`)
   }
 
-  async function repeat(e) {
-    if (!confirm(`Add "${e.description}" (${fmtINR(e.amount)}) again with the same split?`)) return
-    await insertRow('expenses', { description: e.description, amount: e.amount, paid_by: e.paid_by, split_type: e.split_type, shares: e.shares, created_by: me })
+  async function repeat(e, times, every) {
+    const n = Math.max(1, Math.min(30, Number(times) || 1))
+    const base = new Date()
+    for (let i = 0; i < n; i++) {
+      const when = new Date(base)
+      if (every === 'daily') when.setDate(when.getDate() + i)
+      if (every === 'weekly') when.setDate(when.getDate() + 7 * i)
+      if (every === 'monthly') when.setMonth(when.getMonth() + i)
+      await insertRow('expenses', {
+        description: e.description, amount: e.amount, paid_by: e.paid_by, split_type: e.split_type,
+        shares: e.shares, created_by: me, created_at: when.toISOString(),
+      })
+    }
+    const note = n > 1 ? (every === 'now' ? ` ×${n}` : ` ×${n}, ${every}`) : ''
     const others = Object.keys(e.shares || {}).filter(p => p !== me)
     await Promise.all(others.map(p => sendPing({ from: me, recipients: [p], kind: 'tab', title: 'Settle Up',
-      body: `${firstName(me)} added "${e.description}" again (${fmtINR(e.amount)}). Your share: ${fmtINR(e.shares[p] || 0)}.` })))
-    pushToast('Added again')
+      body: `${firstName(me)} repeated "${e.description}" (${fmtINR(e.amount)}${note}). Your share: ${fmtINR(e.shares[p] || 0)} each time.` })))
+    pushToast(n > 1 ? `Repeated ${n} times` : 'Added again')
     load()
   }
 
@@ -144,7 +155,7 @@ export default function SplitTab() {
 
       <h3 className="subhead">Activity</h3>
       {activity.length ? activity.map(a => a._kind === 'expense' ? (
-        <ExpenseCard key={a.id} e={a} me={me} onDelete={() => remove('expenses', a.id)} onRepeat={() => repeat(a)} />
+        <ExpenseCard key={a.id} e={a} me={me} onDelete={() => remove('expenses', a.id)} onRepeat={(t, ev) => repeat(a, t, ev)} />
       ) : (
         <div className="card" key={a.id}>
           <div className="card-top">
@@ -160,6 +171,10 @@ export default function SplitTab() {
 }
 
 function ExpenseCard({ e, me, onDelete, onRepeat }) {
+  const [open, setOpen] = useState(false)
+  const [times, setTimes] = useState(1)
+  const [every, setEvery] = useState('now')
+  const [busy, setBusy] = useState(false)
   const line = myLine(e, me)
   const n = Object.keys(e.shares || {}).length
   return (
@@ -177,9 +192,36 @@ function ExpenseCard({ e, me, onDelete, onRepeat }) {
         {Object.entries(e.shares || {}).map(([p, v]) => <div key={p} className="bal-row"><span>{p}</span><span>{fmtINR(v)}</span></div>)}
       </details>
       <div className="card-actions">
-        <button className="link-btn" onClick={onRepeat}>Repeat</button>
+        <button className="link-btn" onClick={() => setOpen(o => !o)} aria-expanded={open}>{open ? 'Close' : 'Repeat'}</button>
         <button className="link-btn danger" onClick={onDelete}>Delete</button>
       </div>
+      {open && (
+        <div className="repeat-box">
+          <div className="form-row repeat-row">
+            <div>
+              <label>How many times</label>
+              <div className="stepper">
+                <button type="button" aria-label="Fewer times" onClick={() => setTimes(t => Math.max(1, t - 1))}>−</button>
+                <span>{times === 1 ? 'Once' : `${times} times`}</span>
+                <button type="button" aria-label="More times" onClick={() => setTimes(t => Math.min(30, t + 1))}>+</button>
+              </div>
+            </div>
+            <div>
+              <label>When</label>
+              <select value={every} onChange={ev => setEvery(ev.target.value)}>
+                <option value="now">Right now</option>
+                <option value="daily">Every day</option>
+                <option value="weekly">Every week</option>
+                <option value="monthly">Every month</option>
+              </select>
+            </div>
+          </div>
+          <p className="form-hint">Same amount, same split. {every === 'now' ? 'All added right away.' : 'First one now, the rest count once their date arrives. You can cancel upcoming ones.'}</p>
+          <button className="btn small" disabled={busy} onClick={async () => { setBusy(true); await onRepeat(times, every); setBusy(false); setOpen(false); setTimes(1); setEvery('now') }}>
+            {busy ? 'Adding…' : times === 1 && every === 'now' ? `Add ${fmtINR(e.amount)} again` : `Repeat ${times} times`}
+          </button>
+        </div>
+      )}
     </div>
   )
 }
@@ -192,8 +234,6 @@ function ExpenseForm({ me, onDone }) {
   const [type, setType] = useState('equal')
   const [inputs, setInputs] = useState({})
   const [saving, setSaving] = useState(false)
-  const [times, setTimes] = useState(1)
-  const [every, setEvery] = useState('now')
 
   const between = people.includes('ALL') ? ALL_PEOPLE : people
   const { shares, error } = computeShares(amount, between, type, inputs)
@@ -206,26 +246,13 @@ function ExpenseForm({ me, onDone }) {
     ev.preventDefault()
     if (error || !desc.trim()) return
     setSaving(true)
-    const n = Math.max(1, Math.min(30, Number(times) || 1))
-    const base = new Date()
-    for (let i = 0; i < n; i++) {
-      const when = new Date(base)
-      if (every === 'daily') when.setDate(when.getDate() + i)
-      if (every === 'weekly') when.setDate(when.getDate() + 7 * i)
-      if (every === 'monthly') when.setMonth(when.getMonth() + i)
-      await insertRow('expenses', {
-        description: n > 1 && every === 'now' ? `${desc.trim()} (${i + 1}/${n})` : desc.trim(),
-        amount: Number(amount), paid_by: paidBy, split_type: type, shares, created_by: me,
-        created_at: when.toISOString(),
-      })
-    }
-    const repeatNote = n > 1 ? (every === 'now' ? ` ×${n}` : ` ×${n}, ${every}`) : ''
+    await insertRow('expenses', { description: desc.trim(), amount: Number(amount), paid_by: paidBy, split_type: type, shares, created_by: me })
     const others = Object.keys(shares).filter(p => p !== me)
     await Promise.all(others.map(p => sendPing({
       from: me, recipients: [p], kind: 'tab', title: 'Settle Up',
-      body: `${firstName(me || paidBy)} added "${desc.trim()}" (${fmtINR(amount)}${repeatNote}). ${p === paidBy ? `You paid, you get back ${fmtINR(Number(amount) - (shares[p] || 0))} each time.` : `Your share: ${fmtINR(shares[p])} each time.`}`,
+      body: `${firstName(me || paidBy)} added "${desc.trim()}" (${fmtINR(amount)}). ${p === paidBy ? `You paid, you get back ${fmtINR(Number(amount) - (shares[p] || 0))}.` : `Your share: ${fmtINR(shares[p])}.`}`,
     })))
-    pushToast(n > 1 ? `Added ${n} times` : 'Added to Settle Up')
+    pushToast('Added to Settle Up')
     onDone()
   }
 
@@ -272,29 +299,7 @@ function ExpenseForm({ me, onDone }) {
         </div>
       )}
       {error && amount && <div className="form-error" role="alert">{error}</div>}
-      <div className="form-row repeat-row">
-        <div>
-          <label>Repeat</label>
-          <div className="stepper">
-            <button type="button" aria-label="Fewer times" onClick={() => setTimes(t => Math.max(1, t - 1))}>−</button>
-            <span>{times === 1 ? 'Once' : `${times} times`}</span>
-            <button type="button" aria-label="More times" onClick={() => setTimes(t => Math.min(30, t + 1))}>+</button>
-          </div>
-        </div>
-        {times > 1 && (
-          <div>
-            <label>When</label>
-            <select value={every} onChange={e => setEvery(e.target.value)}>
-              <option value="now">All now</option>
-              <option value="daily">Every day</option>
-              <option value="weekly">Every week</option>
-              <option value="monthly">Every month</option>
-            </select>
-          </div>
-        )}
-      </div>
-      {times > 1 && <p className="form-hint">{every === 'now' ? `Adds ${times} copies right now.` : `Adds one now and the rest ${every === 'daily' ? 'daily' : every === 'weekly' ? 'weekly' : 'monthly'}. Each counts once its date arrives, and you can cancel upcoming ones.`}</p>}
-      <button className="btn" type="submit" disabled={!!error || saving}>{times > 1 ? `Save ${times} expenses` : 'Save expense'}</button>
+      <button className="btn" type="submit" disabled={!!error || saving}>Save expense</button>
     </form>
   )
 }

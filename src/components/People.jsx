@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ALL_PEOPLE, FLOOR } from '../data/roster'
-import { firstName, setMe, useMe, useRoom, roomOf } from '../identity'
+import { firstName, setMe, useMe, useRoom, roomOf, GUEST, GUEST_PASSWORD, isGuest } from '../identity'
 import { linkDeviceTo, enableNotifications, notificationState } from '../onesignal'
 import { hasPin, setPin, checkPin } from '../api'
 import { NeonSign } from './Sidebar'
@@ -209,6 +209,7 @@ export function CheckIn() {
             <button className="btn checkin-btn" type="submit" disabled={!name || !room}>Next</button>
           </form>
         )}
+        {step === 1 && <GuestCheckIn />}
         {step === 2 && (
           <PinStep name={name} onVerified={(r) => { setRemember(r); setStep(3) }} onBack={() => setStep(1)} />
         )}
@@ -222,6 +223,35 @@ export function CheckIn() {
         )}
       </div>
     </div>
+  )
+}
+
+/** Visitors: one shared guest login, password printed right here. View only. */
+function GuestCheckIn() {
+  const [open, setOpen] = useState(false)
+  const [pw, setPw] = useState('')
+  const [err, setErr] = useState('')
+
+  function go(e) {
+    e.preventDefault()
+    if (pw.trim().toLowerCase() !== GUEST_PASSWORD) return setErr('That is not the guest password. It is written just above.')
+    setMe(GUEST, '', false)
+  }
+
+  if (!open) {
+    return <button type="button" className="link-btn guest-link" onClick={() => setOpen(true)}>Just visiting? Check in as a guest</button>
+  }
+  return (
+    <form className="checkin-card guest-card" onSubmit={go}>
+      <h1>Guest check-in</h1>
+      <p className="form-hint">For friends visiting the floor. Guests can look around but can't post, ping anyone or see Settle Up, the Sleep Log or the SPC Desk.</p>
+      <div className="guest-pw">Guest password: <strong>{GUEST_PASSWORD}</strong></div>
+      <label htmlFor="guest-pw">Type the password</label>
+      <input id="guest-pw" value={pw} onChange={e => setPw(e.target.value)} autoCapitalize="none" autoComplete="off" placeholder="ashoka4th" required />
+      {err && <div className="form-error" role="alert">{err}</div>}
+      <button className="btn checkin-btn" type="submit">Enter as guest</button>
+      <button type="button" className="link-btn checkin-skip" onClick={() => setOpen(false)}>Back</button>
+    </form>
   )
 }
 
@@ -254,7 +284,9 @@ export function CheckedInLine() {
   }
   return (
     <div className="whoami-line">
-      <span>Checked in as <strong>{firstName(me)}</strong> · Room {room}</span>
+      {isGuest(me)
+        ? <span className="guest-badge">Guest · view only</span>
+        : <span>Checked in as <strong>{firstName(me)}</strong> · Room {room}</span>}
       <button type="button" className="link-btn" onClick={() => window.location.reload()} aria-label="Refresh the app">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ verticalAlign: '-2px', marginRight: 4 }}><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg>Refresh
       </button>

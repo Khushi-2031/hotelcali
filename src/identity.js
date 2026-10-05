@@ -27,9 +27,19 @@ function read(k) {
   try { return localStorage.getItem(k) ?? sessionStorage.getItem(k) } catch { return null }
 }
 
+// Guest account for visitors: view-only, password shown on the check-in screen.
+export const GUEST = 'Guest'
+export const GUEST_PASSWORD = 'ashoka4th'
+// Tabs a guest can't open (personal or floor-only things).
+export const GUEST_HIDDEN = ['split', 'sleep', 'alert', 'spc', 'wakeup', 'maintenance', 'feedback']
+
 export function getMe() {
   const v = read(KEY)
-  return ALL_PEOPLE.includes(v) ? v : null
+  return ALL_PEOPLE.includes(v) || v === GUEST ? v : null
+}
+
+export function isGuest(name) {
+  return name === GUEST
 }
 
 export function getRoom() {

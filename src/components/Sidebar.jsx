@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useMe, isGuest, GUEST_HIDDEN } from '../identity'
 
 // `label` is the motel name shown in the UI, `sub` is the plain-English name
 // so nobody has to decode the theme to find a feature.
@@ -51,11 +52,13 @@ export function NeonSign({ small }) {
 
 // Desktop: a full sidebar listing every section.
 export default function Sidebar({ active, onSelect }) {
+  const me = useMe()
+  const list = isGuest(me) ? SECTIONS.filter(s => !GUEST_HIDDEN.includes(s.id)) : SECTIONS
   return (
     <aside id="sidebar">
       <div id="brand"><NeonSign small /></div>
       <nav aria-label="Sections">
-        {SECTIONS.map(s => (
+        {list.map(s => (
           <button
             key={s.id}
             className={`nav-item tone-${s.tone} ${active === s.id ? 'active' : ''}`}
@@ -76,6 +79,7 @@ export default function Sidebar({ active, onSelect }) {
 
 // Mobile: four main tabs plus a "More" sheet with the full directory.
 export function TabBar({ active, onSelect }) {
+  const me = useMe()
   const [open, setOpen] = useState(false)
   const inMore = !TABS.includes(active)
 
@@ -94,7 +98,7 @@ export function TabBar({ active, onSelect }) {
               <button className="btn ghost small" onClick={() => setOpen(false)}>Close</button>
             </div>
             <div className="directory">
-              {SECTIONS.filter(s => !TABS.includes(s.id)).map(s => (
+              {SECTIONS.filter(s => !TABS.includes(s.id) && !(isGuest(me) && GUEST_HIDDEN.includes(s.id))).map(s => (
                 <button key={s.id} className={`dir-tile tone-${s.tone} ${active === s.id ? 'active' : ''}`} onClick={() => go(s.id)}>
                   <span className="dir-dot" />
                   <span className="dir-label">{s.label}</span>

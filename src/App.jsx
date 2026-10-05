@@ -16,7 +16,7 @@ import HR from './components/HR'
 import Feedback from './components/Feedback'
 import { CheckIn, CheckedInLine, NotifyButton, PinGate } from './components/People'
 import { initOneSignal } from './onesignal'
-import { useMe, pinVerified } from './identity'
+import { useMe, pinVerified, isGuest, GUEST_HIDDEN } from './identity'
 import AdminAlert from './components/AdminAlert'
 import Calendar from './components/Calendar'
 import SleepLog from './components/SleepLog'
@@ -57,16 +57,18 @@ export default function App() {
   if (!me) return <CheckIn />
   if (!pinVerified()) return <PinGate />
 
-  const Screen = SCREENS[active]
-  const section = SECTIONS.find(s => s.id === active)
+  const guest = isGuest(me)
+  const view = guest && GUEST_HIDDEN.includes(active) ? 'dashboard' : active
+  const Screen = SCREENS[view]
+  const section = SECTIONS.find(s => s.id === view)
 
   return (
-    <div id="app" className={`tone-${section?.tone || 'pink'}`}>
-      <Sidebar active={active} onSelect={select} />
+    <div id="app" className={`tone-${section?.tone || 'pink'} ${guest ? 'is-guest' : ''}`}>
+      <Sidebar active={view} onSelect={select} />
       <div id="main">
         <div className="awning" aria-hidden="true" />
         <CriticalBanner refreshKey={bannerKey} />
-        {active === 'dashboard' && (
+        {view === 'dashboard' && (
           <div className="hero-sign">
             <NeonSign />
           </div>
@@ -77,7 +79,7 @@ export default function App() {
           <div className="notify-btn"><NotifyButton label="Enable notifications on this device" /></div>
         </div>
       </div>
-      <TabBar active={active} onSelect={select} />
+      <TabBar active={view} onSelect={select} />
       <Toast />
       <LobbyBell />
     </div>
