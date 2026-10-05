@@ -180,7 +180,7 @@ export function CheckIn() {
         {step === 1 && (
           <form className="checkin-card" onSubmit={next}>
             <h1>Welcome. Please check in.</h1>
-            <p className="form-hint">Pick your name and room. Next you'll set a PIN.</p>
+            <p className="form-hint">Pick your name and room. Next you'll set a PIN. The app keeps a simple log of which tabs and buttons you use (never what you type) so we can see what's working.</p>
             <label htmlFor="ci-name">Your name</label>
             <select id="ci-name" value={name} onChange={e => pickName(e.target.value)} required>
               <option value="">Choose your name</option>

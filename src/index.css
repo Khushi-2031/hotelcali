@@ -533,3 +533,29 @@ th{color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.06em;text-t
 .mess-items li.dessert{font-weight:700;}
 .mess-items small{color:var(--muted);font-weight:600;font-size:12px;}
 .mess-note{background:var(--pink-tint);border-left:3px solid var(--pink);padding:6px 10px;font-size:13px;margin-bottom:6px;border-radius:4px;}
+
+/* Activity Log (admin only) */
+.act-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.act-tools select{flex:1 1 180px;min-height:44px;}
+.act-block{background:var(--card);border:1.5px solid var(--line-2);border-radius:20px;padding:14px 16px;margin-top:14px;}
+.act-block h3{font-size:15px;font-weight:800;margin:0 0 10px;}
+.act-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0 14px;}
+.act-people{list-style:none;margin:0;padding:0;display:grid;gap:6px;}
+.act-person{width:100%;text-align:left;background:var(--field);border:1.5px solid var(--line-2);border-radius:14px;padding:10px 12px;cursor:pointer;color:var(--ink);font-size:14px;}
+.act-person:hover{border-color:var(--blue);}
+.act-meta{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;}
+.act-silent{font-size:12.5px;margin:10px 0 0;color:var(--muted);}
+.act-bar{display:grid;grid-template-columns:110px 1fr 32px;align-items:center;gap:8px;font-size:13px;margin:6px 0;}
+.act-bar i{display:block;height:10px;border-radius:6px;background:var(--blue);box-shadow:0 0 8px rgba(46,107,255,.45);}
+.act-bar b{text-align:right;}
+.act-taps{margin:0;padding-left:20px;font-size:13px;}
+.act-taps li{margin:5px 0;}
+.act-taps li span{display:inline-block;max-width:78%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;}
+.act-taps li b{float:right;}
+.act-feed{list-style:none;margin:0;padding:0;font-size:13.5px;}
+.act-feed li{display:grid;grid-template-columns:66px 1fr auto;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line-2);align-items:baseline;}
+.act-feed li.k-open{color:var(--red-deep);}
+.act-feed li.k-tab{color:var(--blue-deep);}
+.act-day{grid-column:1/-1;margin:8px 0 2px;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.act-time{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--muted);font-size:12.5px;}
+.act-dev{font-size:11.5px;color:var(--muted);}

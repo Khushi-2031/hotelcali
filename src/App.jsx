@@ -16,11 +16,13 @@ import HR from './components/HR'
 import Feedback from './components/Feedback'
 import { CheckIn, CheckedInLine, NotifyButton, PinGate } from './components/People'
 import { initOneSignal } from './onesignal'
-import { useMe, pinVerified, isGuest, GUEST_HIDDEN } from './identity'
+import { useMe, pinVerified, isGuest, isAdmin, GUEST_HIDDEN } from './identity'
 import AdminAlert from './components/AdminAlert'
 import Calendar from './components/Calendar'
 import SleepLog from './components/SleepLog'
 import LobbyBell from './components/LobbyBell'
+import Activity from './components/Activity'
+import { startTracking, trackTab } from './track'
 
 const SCREENS = {
   dashboard: Dashboard,
@@ -38,6 +40,7 @@ const SCREENS = {
   feedback: Feedback,
   calendar: Calendar,
   sleep: SleepLog,
+  activity: Activity,
 }
 
 export default function App() {
@@ -48,6 +51,11 @@ export default function App() {
 
   useEffect(() => { initOneSignal() }, [])
 
+  const ready = !!me && pinVerified()
+  const guestNow = isGuest(me)
+  const viewNow = (guestNow && GUEST_HIDDEN.includes(active)) || (active === 'activity' && !isAdmin(me)) ? 'dashboard' : active
+  useEffect(() => { if (ready) { startTracking(viewNow); trackTab(viewNow) } }, [ready, viewNow])
+
   function select(id) {
     setActive(id)
     location.hash = id
@@ -57,8 +65,8 @@ export default function App() {
   if (!me) return <CheckIn />
   if (!pinVerified()) return <PinGate />
 
-  const guest = isGuest(me)
-  const view = guest && GUEST_HIDDEN.includes(active) ? 'dashboard' : active
+  const guest = guestNow
+  const view = viewNow
   const Screen = SCREENS[view]
   const section = SECTIONS.find(s => s.id === view)
 
