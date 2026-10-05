@@ -1,9 +1,10 @@
 # Hotel Cali
 
-Floor 4's shared hostel management app — duties, Blinkit runs, wake-up calls,
-meal/water clock, maintenance tickets, a floor fund, content drop, washing
-machine queue, plans board, SPC requests, song queue, general requests, an HR
-directory, and feedback. Built with React + Vite, backed by Supabase.
+Ashoka 4th's shared hostel management app: front desk requests, guest register,
+plans and moods, Blinkit runs, Settle Up (Splitwise-style expense splitting),
+mess hours, water log and chhota runs, wake-up calls, repairs, a speaker queue,
+postcard photo and video uploads, the SPC desk, feedback and admin alerts.
+Built with React + Vite, backed by Supabase, with push notifications via OneSignal.
 
 ## 1. Create the Supabase project
 
@@ -51,9 +52,8 @@ hotel-cali/
 └─ .env.example
 ```
 
-## A note on the "Floor Fund"
+## Setup for the new features (do this once, before merging)
 
-The fund tracker logs who paid how much into shared floor purchases (₹800 /
-₹2000 presets, editable) with a bar chart of contributions per person — it's
-built to make splitting costs easy. It's intentionally **not** a personal
-consumption tracker or leaderboard.
+Step-by-step guide: **[SETUP.md](./SETUP.md)**. It covers the SQL, the
+OneSignal API key, the edge function and its secrets, the webhooks, and
+testing.

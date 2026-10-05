@@ -25,7 +25,7 @@ export default function CriticalBanner({ refreshKey }) {
       {alerts.slice(0, 3).map((a, i) => (
         <span key={a.id}>
           {i > 0 && ' | '}
-          <span className="tag">ADMIN ALERT</span> {a.message} — {a.name}
+          <span className="tag">ADMIN ALERT</span> {a.message} ({a.name})
         </span>
       ))}
       {alerts.length > 0 && wakeups.length > 0 && ' | '}

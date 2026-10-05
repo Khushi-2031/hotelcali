@@ -3,20 +3,17 @@ import { useState } from 'react'
 // `label` is the motel name shown in the UI, `sub` is the plain-English name
 // so nobody has to decode the theme to find a feature.
 export const SECTIONS = [
-  { id: 'dashboard', label: 'Front Desk', sub: 'Dashboard', tone: 'pink' },
+  { id: 'dashboard', label: 'Front Desk', sub: 'Dashboard and requests', tone: 'pink' },
   { id: 'hr', label: 'Guest Register', sub: "Who's in which room", tone: 'aqua' },
   { id: 'plans', label: 'Plans & Moods', sub: "Tonight's board", tone: 'violet' },
   { id: 'blinkit', label: 'Room Service', sub: 'Blinkit orders', tone: 'sun' },
-  { id: 'meals', label: 'Mess & Water', sub: 'Meals and water', tone: 'aqua' },
-  { id: 'duties', label: 'Housekeeping', sub: 'Weekly duties', tone: 'mint' },
+  { id: 'split', label: 'Settle Up', sub: 'Split expenses', tone: 'mint' },
+  { id: 'meals', label: 'Mess & Water', sub: 'Meals, water, chhota runs', tone: 'aqua' },
   { id: 'wakeup', label: 'Wake-up Calls', sub: 'Get knocked on time', tone: 'pink' },
-  { id: 'washer', label: 'Laundromat', sub: 'Washing machine', tone: 'violet' },
   { id: 'maintenance', label: 'Repairs', sub: 'Maintenance tickets', tone: 'sun' },
   { id: 'songs', label: 'Jukebox', sub: 'Speaker queue', tone: 'aqua' },
-  { id: 'fund', label: 'Tip Jar', sub: 'Floor fund', tone: 'mint' },
-  { id: 'content', label: 'Postcards', sub: 'Content drop', tone: 'pink' },
-  { id: 'spc', label: 'SPC Desk', sub: 'SPC requests', tone: 'sun' },
-  { id: 'requests', label: 'Suggestion Box', sub: 'Other requests', tone: 'sun' },
+  { id: 'content', label: 'Postcards', sub: 'Photos and videos', tone: 'pink' },
+  { id: 'spc', label: 'SPC Desk', sub: 'From and to the SPC reps', tone: 'sun' },
   { id: 'feedback', label: 'Feedback', sub: 'Tell us about the app', tone: 'violet' },
   { id: 'alert', label: 'Admin Alert', sub: 'Ping the whole floor', tone: 'red' },
 ]
@@ -45,7 +42,7 @@ export function NeonSign({ small }) {
   return (
     <p className={`neon-sign ${small ? 'small' : ''}`}>
       <span className="neon-script">Hotel Cali</span>
-      <span className="neon-sub">Floor 4 · MICA</span>
+      <span className="neon-sub">Ashoka 4th · MICA</span>
     </p>
   )
 }

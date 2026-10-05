@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { listAll, insertRow, updateRow } from '../api'
 import { SectionHead, Pill, Empty, fmtDate } from './ui'
 import { pushToast } from './Toast'
+import { useMe } from '../identity'
+import { PostingAs } from './People'
 
 /**
  * Generic form + list screen driven by config.
@@ -10,9 +12,11 @@ import { pushToast } from './Toast'
  * resolveField: name of boolean column that a "mark done" button flips, or null
  * resolveLabel / doneLabel: button text / done-state pill text
  */
-export default function ListModule({ table, title, desc, fields, renderCard, resolveField, resolveLabel = 'Mark resolved', doneLabel = 'Resolved', sortBy }) {
+export default function ListModule({ table, title, desc, fields, renderCard, resolveField, resolveLabel = 'Mark resolved', doneLabel = 'Resolved', sortBy, children, formTitle, submitLabel = 'Post', onPosted }) {
+  const me = useMe()
+  const initial = () => Object.fromEntries(fields.map(f => [f.name, f.type === 'me' ? me : f.type === 'range' ? (f.default ?? 3) : (f.default ?? f.options?.[0] ?? '')]))
   const [rows, setRows] = useState([])
-  const [form, setForm] = useState(() => Object.fromEntries(fields.map(f => [f.name, f.type === 'range' ? (f.default ?? 3) : (f.options?.[0] ?? '')])))
+  const [form, setForm] = useState(initial)
 
   async function load() {
     let data = await listAll(table, { ascending: false })
@@ -26,11 +30,13 @@ export default function ListModule({ table, title, desc, fields, renderCard, res
   async function submit(e) {
     e.preventDefault()
     const payload = { ...form }
+    fields.forEach(f => { if (f.type === 'me') payload[f.name] = me })
     fields.forEach(f => { if (f.type === 'range') payload[f.name] = Number(payload[f.name]) })
     if (resolveField) payload[resolveField] = false
-    await insertRow(table, payload)
+    const saved = await insertRow(table, payload)
+    if (onPosted) await onPosted(saved || payload)
     pushToast('Posted')
-    setForm(Object.fromEntries(fields.map(f => [f.name, f.type === 'range' ? (f.default ?? 3) : (f.options?.[0] ?? '')])))
+    setForm(initial())
     load()
   }
 
@@ -41,10 +47,13 @@ export default function ListModule({ table, title, desc, fields, renderCard, res
 
   return (
     <div>
-      <SectionHead title={title} desc={desc} />
+      {title && <SectionHead title={title} desc={desc} />}
+      {children}
       <form className="inline-form" onSubmit={submit}>
+        {formTitle && <h3 className="form-title">{formTitle}</h3>}
+        {fields.some(f => f.type === 'me') && <PostingAs />}
         <div className="form-row">
-          {fields.map(f => (
+          {fields.filter(f => f.type !== 'me').map(f => (
             <div key={f.name}>
               <label>{f.label}</label>
               {f.type === 'select' && (
@@ -67,7 +76,7 @@ export default function ListModule({ table, title, desc, fields, renderCard, res
             </div>
           ))}
         </div>
-        <button className="btn" type="submit">Post</button>
+        <button className="btn" type="submit">{submitLabel}</button>
       </form>
 
       {rows.length ? rows.map(row => {
@@ -87,7 +96,7 @@ export default function ListModule({ table, title, desc, fields, renderCard, res
             )}
           </div>
         )
-      }) : <Empty>Nothing here yet — be the first to post.</Empty>}
+      }) : <Empty>Nothing here yet. Be the first to post.</Empty>}
     </div>
   )
 }
