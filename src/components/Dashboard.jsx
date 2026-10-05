@@ -6,6 +6,7 @@ import { pushToast } from './Toast'
 import MealClock from './MealClock'
 import DailyMood from './DailyMood'
 import TodayAtMica from './TodayAtMica'
+import MessMenu from './MessMenu'
 
 const PRESETS = [
   'Pick up my clothes from the washing machine',
@@ -162,6 +163,7 @@ export default function Dashboard() {
       <TodayAtMica />
       <PingsForMe />
       <FrontDeskRequests onCount={setOpenReq} />
+      <MessMenu />
       <h3 className="subhead">Mess hours</h3>
       <div className="card"><MealClock compact /></div>
     </div>
