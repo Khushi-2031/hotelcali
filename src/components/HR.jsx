@@ -1,12 +1,12 @@
 import { FLOOR } from '../data/roster'
 import { SectionHead } from './ui'
 
-const FOBS = ['pink', 'aqua']
+const FOBS = ['pink', 'aqua', 'sun', 'mint']
 
 export default function HR() {
   return (
     <div>
-      <SectionHead title="Guest Register" desc="Every room on the floor, for whenever you forget who's next door." />
+      <SectionHead title="Guest Register" desc="The goated residents and their house numbers." />
       <div className="register">
         {FLOOR.map((r, i) => (
           <div className="room-card" key={r.room}>

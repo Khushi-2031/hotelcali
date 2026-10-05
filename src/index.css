@@ -16,8 +16,9 @@
 
   --pink:var(--red);    --pink-deep:var(--red-deep); --pink-text:var(--red-text); --pink-tint:var(--red-tint); --pink-pale:var(--red-pale);
   --aqua:var(--blue);   --aqua-text:var(--blue-text); --aqua-tint:var(--blue-tint); --aqua-pale:var(--blue-pale);
-  --sun:var(--blue);    --sun-glow:var(--blue);       --sun-tint:var(--blue-tint);  --sun-pale:var(--blue-pale);
-  --mint:var(--blue);   --mint-tint:var(--blue-tint); --mint-pale:var(--blue-pale);
+  /* Supporting accents, used sparingly next to red and blue */
+  --sun:#FFC23D;   --sun-glow:#F5A800;   --sun-tint:#FFF3D1;  --sun-pale:#FFE7A8;
+  --mint:#2DC293;  --mint-deep:#13865F;  --mint-tint:#DDF6EC; --mint-pale:#BDEEDB;
   --violet:var(--blue); --violet-deep:var(--blue);    --violet-tint:var(--blue-tint); --violet-pale:var(--blue-pale);
 
   /* legacy names still referenced inline in components */
@@ -28,9 +29,11 @@
   --accent:var(--red);
   --accent-pale:#FFFFFF;
 }
-/* Awnings: red-and-white or blue-and-white stripes */
-.tone-pink,.tone-red,.tone-sun{--accent:var(--red);--accent-pale:#FFFFFF;}
-.tone-aqua,.tone-mint,.tone-violet{--accent:var(--blue);--accent-pale:#FFFFFF;}
+/* Awnings: mostly red or blue, with a few yellow and mint tabs */
+.tone-pink,.tone-red{--accent:var(--red);--accent-pale:#FFFFFF;}
+.tone-aqua,.tone-violet{--accent:var(--blue);--accent-pale:#FFFFFF;}
+.tone-sun{--accent:var(--sun);--accent-pale:#FFFFFF;}
+.tone-mint{--accent:var(--mint);--accent-pale:#FFFFFF;}
 
 *{box-sizing:border-box;}
 html{background:var(--bg);}
@@ -59,9 +62,7 @@ button,input,select,textarea{font-family:inherit;}
   text-shadow:0 0 2px #fff,0 0 12px rgba(255,45,75,.7),0 0 26px rgba(255,45,75,.45);
   animation:flicker 8s infinite;
 }
-.neon-sub{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.22em;margin-top:6px;}
-.neon-red{color:var(--red);text-shadow:0 0 2px #fff,0 0 12px rgba(255,45,75,.7),0 0 26px rgba(255,45,75,.45);}
-.neon-blue{color:var(--blue);text-shadow:0 0 2px #fff,0 0 12px rgba(46,107,255,.7),0 0 26px rgba(46,107,255,.45);animation-delay:1.3s;}
+.neon-sub{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.22em;margin-top:6px;color:var(--blue-deep);text-shadow:0 0 10px rgba(46,107,255,.35);}
 .neon-sign.small .neon-script{font-size:38px;}
 .neon-sign.small .neon-sub{font-size:14px;margin-top:2px;}
 @media (prefers-reduced-motion: reduce){.neon-script{animation:none;}}
@@ -215,8 +216,10 @@ input[type=checkbox]{min-height:auto;width:20px !important;height:20px;accent-co
 @media (max-width:860px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 .stat{position:relative;border-radius:20px;padding:16px;border:1.5px solid;}
 .stat::after{content:"";position:absolute;top:16px;right:16px;width:10px;height:10px;border-radius:50%;background:var(--dot);box-shadow:0 0 10px var(--dot);}
-.stat:nth-child(odd){background:var(--red-tint);border-color:#FFC4CE;--dot:var(--red);}
-.stat:nth-child(even){background:var(--blue-tint);border-color:#C2D4FF;--dot:var(--blue);}
+.stat:nth-child(4n+1){background:var(--red-tint);border-color:#FFC4CE;--dot:var(--red);}
+.stat:nth-child(4n+2){background:var(--blue-tint);border-color:#C2D4FF;--dot:var(--blue);}
+.stat:nth-child(4n+3){background:var(--sun-tint);border-color:var(--sun-pale);--dot:var(--sun-glow);}
+.stat:nth-child(4n+4){background:var(--mint-tint);border-color:var(--mint-pale);--dot:var(--mint);}
 .stat .n{font-family:'Bebas Neue',sans-serif;font-size:46px;line-height:1;font-weight:400;}
 .stat .l{font-size:13px;font-weight:700;margin-top:4px;}
 
@@ -285,7 +288,7 @@ th{color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.06em;text-t
 .card.is-done{opacity:.65;}
 .subhead-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
 .quick-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
-.pos{color:#1A45B8;font-weight:800;}
+.pos{color:var(--mint-deep);font-weight:800;}
 .neg{color:var(--pink-text);font-weight:800;}
 
 /* Who am I */
@@ -319,7 +322,7 @@ th{color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.06em;text-t
 
 /* Settle Up */
 .tab-summary{text-align:center;padding:22px 18px;}
-.tab-summary.owed{border:2.5px solid var(--mint);box-shadow:0 0 0 4px var(--mint-pale),0 0 22px rgba(46,107,255,.35);}
+.tab-summary.owed{border:2.5px solid var(--mint);box-shadow:0 0 0 4px var(--mint-tint),0 0 22px rgba(45,194,147,.35);}
 .tab-summary.owes{border:2.5px solid var(--pink);box-shadow:0 0 0 4px var(--pink-tint),0 0 22px rgba(255,45,75,.3);}
 .tab-big-label{font-family:'Yellowtail',cursive;font-size:28px;color:var(--muted);}
 .tab-summary.owed .tab-big-label{color:#1A45B8;}
@@ -335,7 +338,7 @@ th{color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.06em;text-t
 .shares summary{cursor:pointer;font-weight:800;color:var(--muted);padding:6px 0;}
 .seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:var(--field);border:1.5px solid var(--line-2);border-radius:16px;margin-bottom:12px;}
 .seg button{min-height:42px;border:none;border-radius:12px;background:transparent;color:var(--ink);font-weight:800;font-size:13px;cursor:pointer;}
-.seg button.on{background:var(--mint);box-shadow:0 0 12px rgba(46,107,255,.5);}
+.seg button.on{background:var(--blue);box-shadow:0 0 12px rgba(46,107,255,.5);}
 .split-list{background:var(--field);border:1.5px solid var(--line-2);border-radius:16px;padding:6px 14px;margin-bottom:12px;}
 .split-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px;font-weight:700;}
 .split-row:last-of-type{border-bottom:none;}
@@ -395,4 +398,6 @@ th{color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.06em;text-t
 .toast{background:var(--blue-deep);color:#fff;box-shadow:0 0 0 3px var(--blue-pale),0 0 20px rgba(46,107,255,.5);}
 .fob-aqua .fob-num{color:#fff;}
 .np-chip.np-all.on{background:var(--red-deep);color:#fff;}
-.tab-summary.owed .tab-big-label{color:var(--blue-text);}
+.tab-summary.owed .tab-big-label{color:var(--mint-deep);}
+
+.fob-sun .fob-num,.fob-mint .fob-num{color:var(--ink);}

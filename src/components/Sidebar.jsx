@@ -41,7 +41,7 @@ function Icon({ name }) {
 export function NeonSign({ small }) {
   return (
     <p className={`neon-sign ${small ? 'small' : ''}`}>
-      <span className="neon-script"><span className="neon-red">Hotel</span> <span className="neon-blue">Cali</span></span>
+      <span className="neon-script">Hotel Cali</span>
       <span className="neon-sub">Ashoka 4th · MICA</span>
     </p>
   )
