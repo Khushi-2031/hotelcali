@@ -4,8 +4,8 @@
   "description": "Ashoka 4th's shared hostel management app",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FFF3E8",
-  "theme_color": "#FF2E88",
+  "background_color": "#FBF5EE",
+  "theme_color": "#D3193A",
   "icons": [
     {
       "src": "/icon.svg",

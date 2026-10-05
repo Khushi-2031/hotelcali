@@ -1,7 +1,7 @@
 import { FLOOR } from '../data/roster'
 import { SectionHead } from './ui'
 
-const FOBS = ['pink', 'aqua', 'sun', 'mint', 'violet']
+const FOBS = ['pink', 'aqua']
 
 export default function HR() {
   return (
