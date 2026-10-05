@@ -1,5 +1,4 @@
 import ListModule, { fmtDate } from './ListModule'
-import { ALL_PEOPLE } from '../data/roster'
 
 export default function Songs() {
   return (
@@ -8,7 +7,7 @@ export default function Songs() {
       title="Jukebox"
       desc="Recommend what should play on the floor speaker next."
       fields={[
-        { name: 'name', label: 'Your name', type: 'select', options: ALL_PEOPLE },
+        { name: 'name', type: 'me' },
         { name: 'song', label: 'Song & artist', type: 'text', placeholder: 'e.g. Kesariya, Arijit Singh', required: true },
       ]}
       renderCard={row => ({

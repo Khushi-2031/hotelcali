@@ -65,10 +65,9 @@ export default function Spc() {
       <FromSpc />
       <h3 className="subhead">Requests to the SPC reps</h3>
       <ListModule
-        key={me || 'nobody'}
         table="spc_requests"
         fields={[
-          { name: 'name', label: 'Your name', type: 'select', options: me ? [me, ...ALL_PEOPLE.filter(p => p !== me)] : ALL_PEOPLE },
+          { name: 'name', type: 'me' },
           { name: 'to_person', label: 'Addressed to', type: 'select', options: ['Either', 'Vismay', 'Simran'] },
           { name: 'details', label: 'Request', type: 'textarea', required: true },
         ]}

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { listAll, insertRow } from '../api'
-import { ALL_PEOPLE } from '../data/roster'
 import { SectionHead, Empty, fmtDate } from './ui'
 import { pushToast } from './Toast'
+import { PostingAs } from './People'
+import { useMe } from '../identity'
 
 export default function AdminAlert({ onChange }) {
   const [rows, setRows] = useState([])
-  const [name, setName] = useState(ALL_PEOPLE[0])
+  const name = useMe()
   const [message, setMessage] = useState('')
 
   async function load() { setRows(await listAll('admin_alerts', { ascending: false })) }
@@ -31,14 +32,7 @@ export default function AdminAlert({ onChange }) {
         desc="For anything urgent enough that the whole floor needs to know right now. This pushes a notification to everyone who has notifications enabled and shows a banner across the app for 30 minutes."
       />
       <form className="inline-form" onSubmit={submit}>
-        <div className="form-row">
-          <div>
-            <label>Your name</label>
-            <select value={name} onChange={e => setName(e.target.value)}>
-              {ALL_PEOPLE.map(p => <option key={p}>{p}</option>)}
-            </select>
-          </div>
-        </div>
+        <PostingAs />
         <div className="form-row">
           <div><label>Alert message</label><input value={message} onChange={e => setMessage(e.target.value)} placeholder="e.g. water's shut off floor-wide till 6pm" required /></div>
         </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { listAll, insertRow, updateRow } from '../api'
-import { ALL_PEOPLE } from '../data/roster'
 import { useMe } from '../identity'
+import { PostingAs } from './People'
 import { SectionHead, Empty } from './ui'
 import { pushToast } from './Toast'
 
@@ -11,12 +11,9 @@ const MOODS = ['Drinks', 'Smoking up', 'Board / card games', 'Going out', 'Movie
 export default function Plans() {
   const me = useMe()
   const [rows, setRows] = useState([])
-  const [name, setName] = useState(me || ALL_PEOPLE[0])
   const [mood, setMood] = useState(MOODS[0])
   const [custom, setCustom] = useState('')
   const [note, setNote] = useState('')
-
-  useEffect(() => { if (me) setName(me) }, [me])
 
   async function load() { setRows(await listAll('plans', { ascending: false })) }
   useEffect(() => { load() }, [])
@@ -27,7 +24,7 @@ export default function Plans() {
     e.preventDefault()
     const finalMood = mood === OTHER ? custom.trim() : mood
     if (!finalMood) return
-    await insertRow('plans', { name, mood: finalMood, note, plus_ones: [] })
+    await insertRow('plans', { name: me, mood: finalMood, note, plus_ones: [] })
     pushToast('Posted to the floor')
     setNote(''); setCustom('')
     load()
@@ -46,13 +43,8 @@ export default function Plans() {
     <div>
       <SectionHead title="Plans & Moods" desc="Post what you're up for and see who else joins in. Pick from the list or write your own mood." />
       <form className="inline-form" onSubmit={submit}>
+        <PostingAs />
         <div className="form-row">
-          <div>
-            <label>Your name</label>
-            <select value={name} onChange={e => setName(e.target.value)}>
-              {ALL_PEOPLE.map(p => <option key={p}>{p}</option>)}
-            </select>
-          </div>
           <div>
             <label>What's the mood</label>
             <select value={mood} onChange={e => setMood(e.target.value)}>

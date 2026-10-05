@@ -1,6 +1,6 @@
 # Hotel Cali
 
-Floor 4's shared hostel management app: front desk requests, guest register,
+Ashoka 4th's shared hostel management app: front desk requests, guest register,
 plans and moods, Blinkit runs, Settle Up (Splitwise-style expense splitting),
 mess hours, water log and chhota runs, wake-up calls, repairs, a speaker queue,
 postcard photo and video uploads, the SPC desk, feedback and admin alerts.

@@ -14,8 +14,9 @@ import Spc from './components/Spc'
 import Songs from './components/Songs'
 import HR from './components/HR'
 import Feedback from './components/Feedback'
-import { WhoAmI } from './components/People'
-import { initOneSignal, askForPushPermission } from './onesignal'
+import { CheckIn, CheckedInLine, NotifyButton } from './components/People'
+import { initOneSignal } from './onesignal'
+import { useMe } from './identity'
 import AdminAlert from './components/AdminAlert'
 
 const SCREENS = {
@@ -38,6 +39,7 @@ export default function App() {
   const initial = SECTIONS.some(s => s.id === location.hash.replace('#', '')) ? location.hash.replace('#', '') : 'dashboard'
   const [active, setActive] = useState(initial)
   const [bannerKey, setBannerKey] = useState(0)
+  const me = useMe()
 
   useEffect(() => { initOneSignal() }, [])
 
@@ -46,6 +48,8 @@ export default function App() {
     location.hash = id
     window.scrollTo(0, 0)
   }
+
+  if (!me) return <CheckIn />
 
   const Screen = SCREENS[active]
   const section = SECTIONS.find(s => s.id === active)
@@ -62,9 +66,9 @@ export default function App() {
           </div>
         )}
         <div id="content">
-          <WhoAmI />
+          <CheckedInLine />
           <Screen onChange={() => setBannerKey(k => k + 1)} go={select} />
-          <button className="btn ghost small notify-btn" onClick={askForPushPermission}>Enable notifications on this device</button>
+          <div className="notify-btn"><NotifyButton label="Enable notifications on this device" /></div>
         </div>
       </div>
       <TabBar active={active} onSelect={select} />

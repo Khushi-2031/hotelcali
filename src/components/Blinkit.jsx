@@ -51,12 +51,11 @@ export default function Blinkit({ go }) {
   const me = useMe()
   return (
     <ListModule
-        key={me || 'nobody'}
         table="blinkit_orders"
         title="Room Service"
         desc="Drop what you need into the current run. One or two floor-wide orders go out each day. Mark it received once it lands."
         fields={[
-          { name: 'name', label: 'Your name', type: 'select', options: me ? [me, ...ALL_PEOPLE.filter(p => p !== me)] : ALL_PEOPLE },
+          { name: 'name', type: 'me' },
           { name: 'item', label: 'Item(s)', type: 'text', placeholder: 'Maggi x4, ice cream tub', required: true },
           { name: 'run', label: 'Order run', type: 'select', options: ['Morning run', 'Evening run'] },
         ]}

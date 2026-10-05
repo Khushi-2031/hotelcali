@@ -42,7 +42,7 @@ export function NeonSign({ small }) {
   return (
     <p className={`neon-sign ${small ? 'small' : ''}`}>
       <span className="neon-script">Hotel Cali</span>
-      <span className="neon-sub">Floor 4 · MICA</span>
+      <span className="neon-sub">Ashoka 4th · MICA</span>
     </p>
   )
 }

@@ -129,7 +129,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <SectionHead title="Floor 4, at a glance" desc="Everything happening on the floor right now. Pull any thread from the menu for the full picture." />
+      <SectionHead title="Ashoka 4th, at a glance" desc="Everything happening on the floor right now. Pull any thread from the menu for the full picture." />
       <div className="grid">
         <div className="stat"><div className="n">{stats.blinkit}</div><div className="l">Blinkit orders open</div></div>
         <div className="stat"><div className="n">{stats.maint}</div><div className="l">Repairs pending</div></div>

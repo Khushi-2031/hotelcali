@@ -113,15 +113,22 @@ had one on `wakeup_calls`, you can delete it or leave it; it's ignored now.
 
 ## Part 5: Test
 
-1. Open the Vercel preview link from the pull request on your phone. On
-   iPhone, first tap Share → **Add to Home Screen** and open it from there,
-   because iOS only allows web push for home-screen apps.
-2. Under "Who's checking in?" pick your name, tap **Check in**, then
-   **Allow** when the phone asks about notifications.
-3. Get one floormate to do the same on their phone.
-4. On **Front Desk**, post a request. Their phone should buzz within a few
+Notifications only work on **thehotelcali.vercel.app**, the one address
+OneSignal is set up for. Preview links can't receive them, and the
+"Turn on notifications" button says so.
+
+1. On the preview link, click through the tabs and check everything looks and
+   saves right (check-in, Settle Up, Front Desk requests, uploads).
+2. Merge the pull request so the live site updates (about a minute).
+3. On your phone open **thehotelcali.vercel.app**. On iPhone, first tap
+   Share → **Add to Home Screen**, then open it from the home screen, because
+   iOS only allows web notifications for home-screen apps.
+4. Check in with your name and room, then tap **Turn on notifications** and
+   choose **Allow**. If something blocks it, the app now says exactly what.
+5. Get one floormate to do the same on their phone.
+6. On **Front Desk**, post a request. Their phone should buzz within a few
    seconds.
-5. If nothing arrives, check in this order:
+7. If nothing arrives, check in this order:
    - Supabase **Table Editor → pings**: is there a new row? If not, the app
      couldn't write it, so check Part 1.
    - Supabase **Edge Functions → notify-critical → Logs**: is there a call?
@@ -129,8 +136,8 @@ had one on `wakeup_calls`, you can delete it or leave it; it's ignored now.
      problem: a wrong key means Part 2/3b; a segment error means set
      `ONESIGNAL_ALL_SEGMENT`.
    - OneSignal **Audience → Subscriptions**: is the phone listed, with an
-     External ID like `khushi-vaswani`? If not, re-pick the name and allow
-     notifications again.
+     External ID like `khushi-vaswani`? If not, tap "Enable notifications on
+     this device" at the bottom of any tab.
    - OneSignal **Delivery**: did a message go out?
 
 ## Part 6 (optional): Email the admin for each postcard
@@ -145,6 +152,6 @@ had one on `wakeup_calls`, you can delete it or leave it; it's ignored now.
 
 ## After merging
 
-Tell the floor: open the app, pick your name once, tap **Enable
-notifications on this device**. Until someone does that, pings addressed to
-them can't find their phone.
+Tell the floor: open the app, check in with name and room (once), and tap
+**Turn on notifications**. Until someone does that, pings addressed to them
+can't find their phone.

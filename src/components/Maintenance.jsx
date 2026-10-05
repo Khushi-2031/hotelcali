@@ -1,15 +1,16 @@
 import ListModule, { fmtDate, Pill } from './ListModule'
-import { ALL_PEOPLE } from '../data/roster'
+import { useRoom } from '../identity'
 
 export default function Maintenance() {
+  const room = useRoom()
   return (
     <ListModule
       table="maintenance_requests"
       title="Repairs"
       desc="Water cooler, electrical faults, sockets, fixtures, anything floor- or room-related. The urgency meter helps the maintenance liaison triage."
       fields={[
-        { name: 'name', label: 'Your name', type: 'select', options: ALL_PEOPLE },
-        { name: 'room', label: 'Room number', type: 'text', placeholder: 'e.g. 46', required: true },
+        { name: 'name', type: 'me' },
+        { name: 'room', label: 'Room number', type: 'text', placeholder: 'e.g. 46', required: true, default: room },
         { name: 'side', label: 'Side of room', type: 'select', options: ['Left', 'Right', 'N/A — common area'] },
         { name: 'category', label: 'Category', type: 'select', options: ['Water cooler', 'Electrical — socket', 'Electrical — light fixture', 'Electrical — other', 'Plumbing', 'Furniture', 'Other'] },
         { name: 'urgency', label: 'Urgency (1 = can wait, 5 = fix now)', type: 'range', min: 1, max: 5, default: 3 },

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { listAll, insertRow } from '../api'
-import { ALL_PEOPLE } from '../data/roster'
 import { useMe, slug } from '../identity'
 import { SectionHead, Empty, fmtDate } from './ui'
 import { pushToast } from './Toast'
+import { PostingAs } from './People'
 
 const BUCKET = 'postcards'
 const MAX_MB = 50
@@ -15,7 +15,7 @@ const publicUrl = (path) => supabase.storage.from(BUCKET).getPublicUrl(path).dat
 export default function Content() {
   const me = useMe()
   const [rows, setRows] = useState([])
-  const [name, setName] = useState(me || ALL_PEOPLE[0])
+  const name = me
   const [type, setType] = useState(TYPES[0])
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
@@ -23,8 +23,6 @@ export default function Content() {
   const [caption, setCaption] = useState('')
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
-
-  useEffect(() => { if (me) setName(me) }, [me])
 
   async function load() { setRows(await listAll('content_posts', { ascending: false })) }
   useEffect(() => { load() }, [])
@@ -69,11 +67,8 @@ export default function Content() {
     <div>
       <SectionHead title="Postcards" desc="Upload photos and videos straight from your phone for the @hotel.calii page. Admins see everything here and get an email for each new one." />
       <form className="inline-form" onSubmit={submit}>
+        <PostingAs />
         <div className="form-row">
-          <div>
-            <label>Your name</label>
-            <select value={name} onChange={e => setName(e.target.value)}>{ALL_PEOPLE.map(p => <option key={p}>{p}</option>)}</select>
-          </div>
           <div>
             <label>Type</label>
             <select value={type} onChange={e => setType(e.target.value)}>{TYPES.map(t => <option key={t}>{t}</option>)}</select>

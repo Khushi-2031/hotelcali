@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
 import { listAll, insertRow, sendPing } from '../api'
-import { ALL_PEOPLE } from '../data/roster'
 import { SectionHead, Pill, Empty } from './ui'
 import { pushToast } from './Toast'
-import { NotifyPicker } from './People'
-import { useMe, firstName } from '../identity'
+import { NotifyPicker, PostingAs } from './People'
+import { useMe, useRoom, firstName } from '../identity'
 
 export default function Wakeup({ onChange }) {
   const me = useMe()
   const [rows, setRows] = useState([])
-  const [name, setName] = useState(me || ALL_PEOPLE[0])
+  const name = me
+  const myRoom = useRoom()
   const [to, setTo] = useState([])
-  const [room, setRoom] = useState('')
+  const [room, setRoom] = useState(myRoom)
   const [time, setTime] = useState('')
   const [date, setDate] = useState('')
   const [notes, setNotes] = useState('')
@@ -43,13 +43,8 @@ export default function Wakeup({ onChange }) {
     <div>
       <SectionHead title="Wake-up Calls" desc={'Ask the floor to wake you at a specific time and ping the people who should knock. Flag "grade-cut situation" and it jumps to the top as a critical alert.'} />
       <form className="inline-form" onSubmit={submit}>
+        <PostingAs />
         <div className="form-row">
-          <div>
-            <label>Your name</label>
-            <select value={name} onChange={e => setName(e.target.value)}>
-              {ALL_PEOPLE.map(p => <option key={p}>{p}</option>)}
-            </select>
-          </div>
           <div><label>Room</label><input value={room} onChange={e => setRoom(e.target.value)} placeholder="e.g. 44" /></div>
         </div>
         <div className="form-row">

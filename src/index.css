@@ -132,7 +132,7 @@ button,input,select,textarea{font-family:inherit;}
 
 /* ---------- Content ---------- */
 #content{padding:26px 40px 80px;max-width:980px;}
-.notify-btn{margin-top:28px;width:100%;border-style:dashed !important;}
+
 
 .section-head{margin-bottom:20px;}
 .section-head .section-kicker{
@@ -364,3 +364,29 @@ th{color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.06em;text-t
 .postcard-caption{font-family:'Yellowtail',cursive;font-size:19px;line-height:1.15;padding:0 4px;}
 .postcard .card-meta{padding:0 4px;margin-top:0;}
 .postcard-links{display:flex;gap:12px;padding:0 4px;font-size:13px;font-weight:800;}
+
+/* ---------- Check-in ---------- */
+.checkin{min-height:100vh;background:var(--bg);display:flex;flex-direction:column;}
+.checkin-body{flex:1;display:flex;flex-direction:column;align-items:center;gap:22px;padding:26px 18px 40px;}
+.checkin .neon-sign{
+  width:100%;max-width:440px;background:var(--card);border:3px solid var(--pink);border-radius:26px;padding:20px 14px 16px;
+  box-shadow:0 0 0 5px var(--pink-tint),0 0 28px rgba(255,46,136,.4),inset 0 0 16px rgba(255,46,136,.18);
+}
+.checkin-card{
+  width:100%;max-width:440px;background:var(--card);border:1.5px solid var(--line);border-radius:24px;
+  box-shadow:0 4px 0 var(--line);padding:22px 20px;display:flex;flex-direction:column;
+}
+.checkin-card h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:34px;line-height:1;letter-spacing:.02em;margin:0 0 8px;}
+.checkin-card label{margin-top:12px;}
+.checkin-btn{margin-top:20px;width:100%;}
+.checkin-skip{margin-top:14px;align-self:center;}
+.checkin-card .link-btn.danger{align-self:center;}
+
+/* ---------- Notifications button + posting-as ---------- */
+.notify-wrap{display:flex;flex-direction:column;}
+.notify-msg{margin:10px 0 0;padding:10px 12px;border-radius:14px;font-size:13.5px;font-weight:700;line-height:1.45;}
+.notify-msg.ok{background:var(--mint-tint);border:1.5px solid var(--mint);}
+.notify-msg.warn{background:var(--sun-tint);border:1.5px solid #FFE08A;}
+.notify-btn{margin-top:28px;}
+.notify-btn .btn{width:100%;border-style:dashed;}
+.posting-as{margin:0 0 12px;padding:8px 12px;border-radius:12px;background:var(--pink-tint);font-size:13.5px;color:var(--ink);display:inline-block;}
