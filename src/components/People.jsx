@@ -6,6 +6,7 @@ import { hasPin, setPin, checkPin } from '../api'
 import { NeonSign } from './Sidebar'
 import { bellOn, setBell, ringBell } from './LobbyBell'
 import { useSchedule, setMySubjects } from '../schedule'
+import { SpecPicker } from './Classes'
 
 /**
  * Pick who gets pinged. Value is an array of full names, or ['ALL'].
@@ -197,13 +198,8 @@ export function CheckIn() {
             </select>
             {allSubjects.length > 0 && (
               <>
-                <label>Your subjects this term</label>
-                <div className="np-chips">
-                  {allSubjects.map(x => (
-                    <button key={x} type="button" className={`np-chip ${subs.includes(x) ? 'on' : ''}`} aria-pressed={subs.includes(x)}
-                      onClick={() => setSubs(v => v.includes(x) ? v.filter(y => y !== x) : [...v, x])}>{x}</button>
-                  ))}
-                </div>
+                <label>Your 2 specializations</label>
+                <SpecPicker value={subs} onChange={setSubs} />
               </>
             )}
             <button className="btn checkin-btn" type="submit" disabled={!name || !room}>Next</button>
