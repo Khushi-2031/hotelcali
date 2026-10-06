@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ACADEMIC_CALENDAR, TYPE_LABEL, ymd, fmtRange } from '../data/academicCalendar'
-import { useSchedule, useMySubjects, setMySubjects, classesOn } from '../schedule'
+import { useSchedule, useMySubjects, classesOn, eventsOn, MAX_SPECS } from '../schedule'
+import { ClassRow, EventRow, SpecPicker } from './Classes'
 import { SectionHead, Empty } from './ui'
 
 function addDays(day, n) {
@@ -14,36 +15,31 @@ function MyClasses() {
   const subjects = useMySubjects()
   const [day, setDay] = useState(ymd())
   const [editing, setEditing] = useState(false)
-  const all = schedule?.subjects || []
   const classes = classesOn(schedule, day, subjects)
+  const events = eventsOn(schedule, day)
   const label = new Date(day + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' })
 
   if (!schedule) return null
-  if (!(schedule.sessions || []).length) {
+  if (!schedule.sessions.length) {
     return (
       <>
         <h3 className="subhead">My classes</h3>
-        <Empty>The class timetable isn't connected yet. Once it is, your daily classes show here and on the Front Desk, updated every hour.</Empty>
+        <Empty>The class timetable isn't loaded yet. Once it is, your daily classes show here and on the Front Desk.</Empty>
       </>
     )
   }
-
-  function toggle(s) {
-    setMySubjects(subjects.includes(s) ? subjects.filter(x => x !== s) : [...subjects, s])
-  }
+  const showPicker = editing || subjects.length < MAX_SPECS
 
   return (
     <>
       <div className="subhead-row">
         <h3 className="subhead">My classes</h3>
-        <button className="link-btn" onClick={() => setEditing(e => !e)}>{editing ? 'Done' : `My subjects (${subjects.length || 'all'})`}</button>
+        {subjects.length > 0 && <button className="link-btn" onClick={() => setEditing(e => !e)}>{editing ? 'Done' : `My specializations: ${subjects.join(' + ')}`}</button>}
       </div>
-      {editing && (
+      {showPicker && (
         <div className="card">
-          <div className="card-meta">Pick the subjects you take. Leave all off to see every class.</div>
-          <div className="np-chips" style={{ marginTop: 10 }}>
-            {all.map(s => <button key={s} type="button" className={`np-chip ${subjects.includes(s) ? 'on' : ''}`} aria-pressed={subjects.includes(s)} onClick={() => toggle(s)}>{s}</button>)}
-          </div>
+          <div className="card-meta">Pick your 2 specializations. You'll only see their classes.</div>
+          <div style={{ marginTop: 10 }}><SpecPicker /></div>
         </div>
       )}
       <div className="day-nav">
@@ -52,13 +48,11 @@ function MyClasses() {
         <button className="btn small ghost" onClick={() => setDay(addDays(day, 1))} aria-label="Next day">›</button>
       </div>
       <div className="card">
-        {classes.length ? classes.map((c, i) => (
-          <div className="class-row" key={i}>
-            <span className="class-time">{c.start}<br /><small>{c.end}</small></span>
-            <span className="class-info"><strong>{c.subject}</strong>{(c.room || c.faculty) && <small>{[c.room, c.faculty].filter(Boolean).join(' · ')}</small>}</span>
-          </div>
-        )) : <div className="card-meta">No classes.</div>}
-        {schedule.updated_at && <div className="card-meta" style={{ marginTop: 10 }}>Timetable checked {new Date(schedule.updated_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}</div>}
+        {events.map((e, i) => <EventRow key={'e' + i} e={e} />)}
+        {classes.map((c, i) => <ClassRow key={i} c={c} />)}
+        {!classes.length && !events.length && <div className="card-meta">{subjects.length ? 'No classes for you this day.' : 'No classes.'}</div>}
+        {!subjects.length && classes.length > 0 && <div className="card-meta" style={{ marginTop: 8 }}>Showing every class. Pick your specializations above to see just yours.</div>}
+        {schedule.checked_at && <div className="card-meta" style={{ marginTop: 10 }}>Timetable checked {new Date(schedule.checked_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}</div>}
       </div>
     </>
   )
