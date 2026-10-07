@@ -28,6 +28,13 @@ export function initOneSignal() {
           notifyButton: { enable: false },
           allowLocalhostAsSecureOrigin: true,
         })
+        // Self-heal: the phone allowed notifications but never finished
+        // registering with OneSignal (or got opted out). Register it now.
+        try {
+          if (Notification.permission === 'granted' && !OneSignal.User.PushSubscription.optedIn) {
+            await OneSignal.User.PushSubscription.optIn()
+          }
+        } catch { /* ignore */ }
         const me = getMe()
         if (me) await OneSignal.login(slug(me))
         resolve(OneSignal)
@@ -91,11 +98,28 @@ export async function enableNotifications() {
     try { await OneSignal.User.PushSubscription.optIn() } catch { /* already opted in */ }
     const me = getMe()
     if (me) await OneSignal.login(slug(me))
+    // Wait for OneSignal to hand back a subscription id: that is the real proof.
+    const sub = OneSignal.User.PushSubscription
+    for (let i = 0; i < 20 && !(sub.id && sub.optedIn); i++) await new Promise(r => setTimeout(r, 500))
+    if (!(sub.id && sub.optedIn)) {
+      return { ok: false, message: "Your phone allowed notifications but didn't finish registering. Close the app fully, reopen it, and tap this again." }
+    }
     return { ok: true, message: "Notifications are on. You'll get pings meant for you." }
   } catch (e) {
     if (e?.message === 'timeout') return { ok: false, message: "Couldn't reach the notification service. Check your internet and try again." }
     return { ok: false, message: 'Something went wrong turning notifications on. Close the app, reopen it, and try again.' }
   }
+}
+
+/** Is this phone really registered to receive pushes? */
+export async function pushStatus() {
+  if (notificationState() !== 'granted') return 'off'
+  try {
+    const OneSignal = await withTimeout(initOneSignal(), 8000)
+    const sub = OneSignal.User.PushSubscription
+    for (let i = 0; i < 10 && !(sub.id && sub.optedIn); i++) await new Promise(r => setTimeout(r, 500))
+    return sub.id && sub.optedIn ? 'on' : 'half'
+  } catch { return 'half' }
 }
 
 // Kept for older imports.
