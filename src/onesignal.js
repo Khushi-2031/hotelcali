@@ -107,7 +107,9 @@ export async function enableNotifications() {
     return { ok: true, message: "Notifications are on. You'll get pings meant for you." }
   } catch (e) {
     if (e?.message === 'timeout') return { ok: false, message: "Couldn't reach the notification service. Check your internet and try again." }
-    return { ok: false, message: 'Something went wrong turning notifications on. Close the app, reopen it, and try again.' }
+    const why = String(e?.message || e || 'unknown').slice(0, 140)
+    try { console.error('enableNotifications', e) } catch { /* ignore */ }
+    return { ok: false, message: `Couldn't turn notifications on (${why}). Close the app fully, reopen it, and try again. If it keeps failing, screenshot this for Khushi.` }
   }
 }
 
