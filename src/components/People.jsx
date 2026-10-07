@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { ALL_PEOPLE, FLOOR } from '../data/roster'
-import { firstName, setMe, useMe, useRoom, roomOf, GUEST, GUEST_PASSWORD, isGuest } from '../identity'
-import { linkDeviceTo, enableNotifications, notificationState } from '../onesignal'
-import { hasPin, setPin, checkPin } from '../api'
+import { firstName, setMe, useMe, useRoom, roomOf, GUEST, GUEST_PASSWORD, isGuest, getMe } from '../identity'
+import { linkDeviceTo, enableNotifications, notificationState, pushStatus } from '../onesignal'
+import { hasPin, setPin, checkPin, sendPing } from '../api'
 import { NeonSign } from './Sidebar'
 import { bellOn, setBell, ringBell } from './LobbyBell'
 import { useSchedule, setMySubjects } from '../schedule'
@@ -47,22 +47,45 @@ export function NotifyPicker({ value, onChange, label = 'Ping', allowAll = true,
 /** Button that turns notifications on and says exactly what happened. */
 export function NotifyButton({ className = 'btn ghost small', label = 'Turn on notifications', onDone }) {
   const [busy, setBusy] = useState(false)
-  const [result, setResult] = useState(notificationState() === 'granted' ? { ok: true, message: 'Notifications are on for this phone.' } : null)
+  const [result, setResult] = useState(null)
+  const [status, setStatus] = useState(null) // on | half | off
+  const [testMsg, setTestMsg] = useState('')
+
+  useEffect(() => {
+    let alive = true
+    pushStatus().then(s => { if (alive) setStatus(s) })
+    return () => { alive = false }
+  }, [])
 
   async function go() {
     setBusy(true)
     const r = await enableNotifications()
     setResult(r)
+    setStatus(r.ok ? 'on' : await pushStatus())
     setBusy(false)
     if (r.ok && onDone) onDone()
   }
 
+  async function test() {
+    const me = getMe()
+    if (!me) return
+    setTestMsg('Sending…')
+    try {
+      await sendPing({ from: me, recipients: [me], title: 'Hotel Cali test', body: 'If you can see this on your lock screen, notifications work.', kind: 'test' })
+      setTestMsg('Sent. Lock your phone: it should arrive in a few seconds.')
+    } catch { setTestMsg("Couldn't send the test. Check your internet.") }
+  }
+
+  const on = status === 'on'
   return (
     <div className="notify-wrap">
       <button type="button" className={className} onClick={go} disabled={busy}>
-        {busy ? 'Asking your phone…' : result?.ok ? 'Notifications are on' : label}
+        {busy ? 'Asking your phone…' : on ? 'Notifications are on' : status === 'half' ? 'Finish turning on notifications' : label}
       </button>
+      {on && getMe() && <button type="button" className="link-btn notify-test" onClick={test}>Send me a test notification</button>}
       {result && <p className={`notify-msg ${result.ok ? 'ok' : 'warn'}`} role="status">{result.message}</p>}
+      {!result && status === 'half' && <p className="notify-msg warn" role="status">This phone allowed notifications but isn't registered yet, so pings won't reach it. Tap the button above.</p>}
+      {testMsg && <p className="notify-msg ok" role="status">{testMsg}</p>}
     </div>
   )
 }
