@@ -7,6 +7,7 @@ import { NeonSign } from './Sidebar'
 import { bellOn, setBell, ringBell } from './LobbyBell'
 import { useSchedule, setMySubjects } from '../schedule'
 import { SpecPicker } from './Classes'
+import { BUILD } from '../version'
 
 /**
  * Pick who gets pinged. Value is an array of full names, or ['ALL'].
@@ -86,6 +87,7 @@ export function NotifyButton({ className = 'btn ghost small', label = 'Turn on n
       {result && <p className={`notify-msg ${result.ok ? 'ok' : 'warn'}`} role="status">{result.message}</p>}
       {!result && status === 'half' && <p className="notify-msg warn" role="status">This phone allowed notifications but isn't registered yet, so pings won't reach it. Tap the button above.</p>}
       {testMsg && <p className="notify-msg ok" role="status">{testMsg}</p>}
+      <p className="app-build">App version {BUILD}</p>
     </div>
   )
 }
