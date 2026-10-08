@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getMeta } from './api'
+import { getMeta, supabase } from './api'
+import { getMe, isGuest } from './identity'
 
 // Class schedule from MICA's SharePoint timetable. Shape:
 // { updated_at, checked_at, groups: { S1: 'FMCG & FMCD', ... },
@@ -16,6 +17,17 @@ export function getMySubjects() {
 export function setMySubjects(list) {
   try { localStorage.setItem(KEY, JSON.stringify(list)) } catch { /* ignore */ }
   window.dispatchEvent(new CustomEvent(EVT, { detail: list }))
+  syncMySubjects()
+}
+
+// Copy this person's picks to the database so the midnight digest
+// (notify-critical, type "digest") knows whose classes to send.
+export async function syncMySubjects() {
+  const name = getMe()
+  if (!name || isGuest(name)) return
+  const { error } = await supabase.from('member_subjects')
+    .upsert({ name, subjects: getMySubjects(), updated_at: new Date().toISOString() })
+  if (error && !/member_subjects|relation|schema cache/i.test(error.message || '')) console.error('member_subjects', error)
 }
 
 export function useMySubjects() {

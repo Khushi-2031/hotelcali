@@ -5,10 +5,10 @@ import { useMe, isGuest, isAdmin, GUEST_HIDDEN } from '../identity'
 // so nobody has to decode the theme to find a feature.
 export const SECTIONS = [
   { id: 'dashboard', label: 'Front Desk', sub: 'Dashboard and requests', tone: 'pink' },
-  { id: 'hr', label: 'Guest Register', sub: "Who's in which room", tone: 'aqua' },
+  { id: 'split', label: 'Settle Up', sub: 'Split expenses', tone: 'mint' },
   { id: 'plans', label: 'Plans & Moods', sub: "Tonight's board", tone: 'violet' },
   { id: 'blinkit', label: 'Room Service', sub: 'Blinkit orders', tone: 'sun' },
-  { id: 'split', label: 'Settle Up', sub: 'Split expenses', tone: 'mint' },
+  { id: 'hr', label: 'Guest Register', sub: "Who's in which room", tone: 'aqua' },
   { id: 'calendar', label: 'Calendar', sub: 'Classes and academic dates', tone: 'aqua' },
   { id: 'sleep', label: 'Sleep Log', sub: 'When you slept', tone: 'mint' },
   { id: 'meals', label: 'Meal Plans', sub: 'Mess hours, water, chhota runs', tone: 'aqua' },
@@ -29,11 +29,12 @@ export function visibleSections(me) {
 
 export const sectionById = (id) => SECTIONS.find(s => s.id === id) || SECTIONS[0]
 
-const TABS = ['dashboard', 'hr', 'plans', 'blinkit']
+const TABS = ['dashboard', 'split', 'plans', 'blinkit']
 
 const ICONS = {
   dashboard: <><path d="M5 17a7 7 0 0 1 14 0" /><path d="M12 10V7M10 7h4M3 17h18M4 20h16" /></>,
   hr: <><circle cx="8" cy="16" r="4" /><path d="M11 13l9-9M16 8l2.5 2.5M13.5 10.5l2 2" /></>,
+  split: <><circle cx="12" cy="12" r="9" /><path d="M9 7.5h6M9 11h6M11 7.5c3.5 0 3.5 7 0 7h-2l5 3.5" /></>,
   plans: <><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" /><path d="M19 17v4M17 19h4" /></>,
   blinkit: <><path d="M5 8h14l-1 12H6L5 8z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></>,
   more: <><rect x="4" y="4" width="6" height="6" rx="1.5" /><rect x="14" y="4" width="6" height="6" rx="1.5" /><rect x="4" y="14" width="6" height="6" rx="1.5" /><rect x="14" y="14" width="6" height="6" rx="1.5" /></>,
@@ -87,7 +88,9 @@ export default function Sidebar({ active, onSelect }) {
 export function TabBar({ active, onSelect }) {
   const me = useMe()
   const [open, setOpen] = useState(false)
-  const inMore = !TABS.includes(active)
+  // Guests can't open Settle Up, so they get the Guest Register in that slot.
+  const tabs = isGuest(me) ? TABS.map(t => (t === 'split' ? 'hr' : t)) : TABS
+  const inMore = !tabs.includes(active)
 
   function go(id) {
     setOpen(false)
@@ -104,7 +107,7 @@ export function TabBar({ active, onSelect }) {
               <button className="btn ghost small" onClick={() => setOpen(false)}>Close</button>
             </div>
             <div className="directory">
-              {visibleSections(me).filter(s => !TABS.includes(s.id)).map(s => (
+              {visibleSections(me).filter(s => !tabs.includes(s.id)).map(s => (
                 <button key={s.id} className={`dir-tile tone-${s.tone} ${active === s.id ? 'active' : ''}`} onClick={() => go(s.id)}>
                   <span className="dir-dot" />
                   <span className="dir-label">{s.label}</span>
@@ -116,12 +119,12 @@ export function TabBar({ active, onSelect }) {
         </div>
       )}
       <nav id="tabbar" aria-label="Main">
-        {TABS.map(id => {
+        {tabs.map(id => {
           const s = sectionById(id)
           return (
             <button key={id} className={active === id ? 'active' : ''} aria-current={active === id ? 'page' : undefined} onClick={() => go(id)}>
               <Icon name={id} />
-              <span>{id === 'blinkit' ? 'Blinkit' : id === 'hr' ? 'Guests' : id === 'plans' ? 'Plans' : s.label}</span>
+              <span>{id === 'blinkit' ? 'Blinkit' : id === 'split' ? 'Settle Up' : id === 'hr' ? 'Guests' : id === 'plans' ? 'Plans' : s.label}</span>
             </button>
           )
         })}
