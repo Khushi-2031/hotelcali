@@ -31,7 +31,7 @@ function read(k) {
 export const GUEST = 'Guest'
 export const GUEST_PASSWORD = 'ashoka4th'
 // Tabs a guest can't open (personal or floor-only things).
-export const GUEST_HIDDEN = ['split', 'sleep', 'alert', 'spc', 'wakeup', 'maintenance', 'feedback']
+export const GUEST_HIDDEN = ['split', 'sleep', 'alert', 'spc', 'wakeup', 'maintenance', 'feedback', 'plans']
 
 // Old spellings saved on phones before a name was corrected in the roster.
 const RENAMED = { 'Protim Chowdhary': 'Protim Chowdhury' }
