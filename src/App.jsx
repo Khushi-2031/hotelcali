@@ -23,6 +23,7 @@ import SleepLog from './components/SleepLog'
 import LobbyBell from './components/LobbyBell'
 import Activity from './components/Activity'
 import { startTracking, trackTab } from './track'
+import { syncMySubjects } from './schedule'
 
 const SCREENS = {
   dashboard: Dashboard,
@@ -55,6 +56,7 @@ export default function App() {
   const guestNow = isGuest(me)
   const viewNow = (guestNow && GUEST_HIDDEN.includes(active)) || (active === 'activity' && !isAdmin(me)) ? 'dashboard' : active
   useEffect(() => { if (ready) { startTracking(viewNow); trackTab(viewNow) } }, [ready, viewNow])
+  useEffect(() => { if (ready) syncMySubjects() }, [ready, me])
 
   function select(id) {
     setActive(id)

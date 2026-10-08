@@ -6,6 +6,9 @@
 //   1. table: admin_alerts,  event: INSERT   -> pushes to everyone
 //   2. table: pings,         event: INSERT   -> pushes to the people picked in the app (or everyone)
 //   3. table: content_posts, event: INSERT   -> optional: emails the admin when a postcard is uploaded
+// Plus a nightly pg_cron job (migration 006) that posts {"type":"digest"} at 12:00 am IST:
+// each person gets their classes for the day that just started, everyone gets the mess menu.
+// Test it without sending anything: POST {"type":"digest","dry":true} (add "date":"2026-10-09" to pick a day).
 // The old wakeup_calls webhook can stay; wake-up pings now go through `pings`, so it is ignored here.
 //
 // Secrets (Edge Functions > Secrets):
@@ -65,9 +68,76 @@ async function emailAdmin(row: Record<string, string>) {
   return await res.json()
 }
 
+// ---- Midnight digest --------------------------------------------------------
+
+const SUPA = Deno.env.get('SUPABASE_URL')!
+const SERVICE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const SITE = Deno.env.get('SITE_URL') || 'https://thehotelcali.vercel.app'
+
+async function rest(path: string) {
+  const res = await fetch(`${SUPA}/rest/v1/${path}`, { headers: { apikey: SERVICE, Authorization: `Bearer ${SERVICE}` } })
+  return res.ok ? await res.json() : []
+}
+
+const istDate = () => new Date(Date.now() + 330 * 60000).toISOString().slice(0, 10)
+const dayName = (d: string) => new Date(d + 'T00:00:00Z').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })
+const clip = (t: string, n = 40) => (t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t)
+const courseName = (c: any) => clip(String(c.title || c.course).replace(/\s*\([^)]*\)/g, '').split(':')[0].trim() || c.course)
+const short = (list: string[] = [], n = 4) => list.slice(0, n).join(', ') + (list.length > n ? '…' : '')
+
+async function digest({ date, dry }: { date?: string; dry?: boolean }) {
+  const day = date || istDate()
+  const [meta, members, menu] = await Promise.all([
+    rest('app_meta?key=eq.class_schedule&select=value'),
+    rest('member_subjects?select=name,subjects'),
+    fetch(`${SITE}/mess-menu.json?t=${Date.now()}`).then(r => (r.ok ? r.json() : null)).catch(() => null),
+  ])
+  const sched = meta?.[0]?.value || { sessions: [], events: [] }
+  const events = (sched.events || []).filter((e: any) => e.date === day)
+  const evLine = events.length ? events.map((e: any) => e.title).join(' · ') : ''
+
+  const messages: { to: string[] | 'ALL'; heading: string; body: string }[] = []
+
+  // Classes, one push per person who has picked their specializations.
+  for (const m of members as { name: string; subjects: string[] }[]) {
+    if (!m.subjects?.length) continue
+    const classes = (sched.sessions || [])
+      .filter((s: any) => s.date === day && m.subjects.includes(s.subject))
+      .sort((a: any, b: any) => a.start.localeCompare(b.start))
+    const body = classes.length
+      ? classes.map((c: any) => `${c.start} ${courseName(c)}${c.room ? ` (${c.room})` : ''}`).join('\n')
+      : 'No classes today.'
+    messages.push({ to: [m.name], heading: `Classes, ${dayName(day)}`, body: body + (evLine ? `\n${evLine}` : '') })
+  }
+
+  // Mess menu, to everyone.
+  const entry = menu?.days?.find((d: any) => d.date === day)
+  if (entry) {
+    const notes = (menu.notes || []).filter((n: any) => !n.date || n.date === day).map((n: any) => `Change: ${n.text}`)
+    const lines = [
+      `Breakfast: ${short(entry.breakfast)}`,
+      `Lunch: ${short(entry.lunch)}`,
+      `Snacks: ${short(entry.snacks)}`,
+      `Dinner: ${short(entry.dinner)}${entry.dessert?.length ? ` + ${entry.dessert.join(', ')}` : ''}`,
+      ...notes,
+    ]
+    messages.push({ to: 'ALL', heading: `Mess menu, ${dayName(day)}`, body: lines.join('\n') })
+  } else if (evLine) {
+    messages.push({ to: 'ALL', heading: `Today, ${dayName(day)}`, body: evLine })
+  }
+
+  if (dry) return { day, messages }
+  const results = []
+  for (const m of messages) results.push(await push({ heading: m.heading, body: m.body, recipients: m.to }))
+  return { day, sent: messages.length, results }
+}
+
 Deno.serve(async (req) => {
   try {
     const payload = await req.json()
+    if (payload?.type === 'digest') {
+      return new Response(JSON.stringify(await digest(payload)), { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
     const row = payload.record
     const table = payload.table
     if (!row) return new Response(JSON.stringify({ skipped: true }), { status: 200 })

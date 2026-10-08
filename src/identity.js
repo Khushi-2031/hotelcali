@@ -33,8 +33,15 @@ export const GUEST_PASSWORD = 'ashoka4th'
 // Tabs a guest can't open (personal or floor-only things).
 export const GUEST_HIDDEN = ['split', 'sleep', 'alert', 'spc', 'wakeup', 'maintenance', 'feedback']
 
+// Old spellings saved on phones before a name was corrected in the roster.
+const RENAMED = { 'Protim Chowdhary': 'Protim Chowdhury' }
+
 export function getMe() {
-  const v = read(KEY)
+  let v = read(KEY)
+  if (RENAMED[v]) {
+    v = RENAMED[v]
+    try { for (const st of [localStorage, sessionStorage]) if (st.getItem(KEY)) st.setItem(KEY, v) } catch { /* ignore */ }
+  }
   return ALL_PEOPLE.includes(v) || v === GUEST ? v : null
 }
 
