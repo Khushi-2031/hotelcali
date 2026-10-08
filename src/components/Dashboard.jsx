@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { listAll, insertRow, updateRow, deleteRow, sendPing } from '../api'
-import { useMe, firstName } from '../identity'
+import { useMe, firstName, isGuest } from '../identity'
 import { SectionHead, Empty, fmtDate, RemoveMine } from './ui'
 import { pushToast } from './Toast'
 import MealClock from './MealClock'
@@ -134,6 +134,7 @@ function PingsForMe() {
 }
 
 export default function Dashboard({ go }) {
+  const me = useMe()
   const [stats, setStats] = useState({ blinkit: 0, maint: 0, plans: 0 })
   const [openReq, setOpenReq] = useState(0)
 
@@ -163,9 +164,9 @@ export default function Dashboard({ go }) {
       </div>
       <FrontDeskRequests onCount={setOpenReq} />
       <Shelves go={go} />
-      <DailyMood />
+      {!isGuest(me) && <DailyMood />}
       <TodayAtMica />
-      <PingsForMe />
+      {!isGuest(me) && <PingsForMe />}
       <MessMenu />
       <h3 className="subhead">Mess hours</h3>
       <div className="card"><MealClock compact /></div>

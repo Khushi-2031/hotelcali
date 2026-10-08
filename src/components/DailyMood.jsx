@@ -6,7 +6,7 @@ import { pushToast } from './Toast'
 
 export const DAILY_MOODS = [
   { label: 'Chill', tone: 'blue' },
-  { label: 'Session', tone: 'navy' },
+  { label: 'Sesh', tone: 'navy' },
   { label: 'Party', tone: 'red' },
   { label: 'To go out', tone: 'sun' },
   { label: 'Slow day', tone: 'mint' },
@@ -15,7 +15,7 @@ export const DAILY_MOODS = [
   { label: 'Do Not Disturb', tone: 'ink' },
 ]
 
-const toneOf = (mood) => DAILY_MOODS.find(m => m.label === mood)?.tone || 'blue'
+const toneOf = (mood) => (mood === 'Session' ? 'navy' : DAILY_MOODS.find(m => m.label === mood)?.tone || 'blue')
 const today = () => {
   const d = new Date()
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
