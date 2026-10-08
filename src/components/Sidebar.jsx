@@ -4,22 +4,30 @@ import { useMe, isGuest, isAdmin, GUEST_HIDDEN } from '../identity'
 // `label` is the motel name shown in the UI, `sub` is the plain-English name
 // so nobody has to decode the theme to find a feature.
 export const SECTIONS = [
-  { id: 'dashboard', label: 'Front Desk', sub: 'Dashboard and requests', tone: 'pink' },
-  { id: 'split', label: 'Settle Up', sub: 'Split expenses', tone: 'mint' },
-  { id: 'plans', label: 'Plans & Moods', sub: "Tonight's board", tone: 'violet' },
-  { id: 'blinkit', label: 'Room Service', sub: 'Blinkit orders', tone: 'sun' },
-  { id: 'hr', label: 'Guest Register', sub: "Who's in which room", tone: 'aqua' },
-  { id: 'calendar', label: 'Calendar', sub: 'Classes and academic dates', tone: 'aqua' },
-  { id: 'sleep', label: 'Sleep Log', sub: 'When you slept', tone: 'mint' },
-  { id: 'meals', label: 'Meal Plans', sub: 'Mess hours, water, chhota runs', tone: 'aqua' },
-  { id: 'wakeup', label: 'Wake-up Calls', sub: 'Get knocked on time', tone: 'pink' },
-  { id: 'maintenance', label: 'Repairs', sub: 'Maintenance tickets', tone: 'sun' },
-  { id: 'songs', label: 'Jukebox', sub: 'Speaker queue', tone: 'aqua' },
-  { id: 'content', label: 'Postcards', sub: 'Photos and videos', tone: 'pink' },
-  { id: 'spc', label: 'SPC Desk', sub: 'From and to the SPC reps', tone: 'sun' },
-  { id: 'feedback', label: 'Feedback', sub: 'Tell us about the app', tone: 'violet' },
-  { id: 'alert', label: 'Admin Alert', sub: 'Ping the whole floor', tone: 'red' },
-  { id: 'activity', label: 'Activity Log', sub: 'Who used what (only you)', tone: 'violet', admin: true },
+  { id: 'dashboard', label: 'Front Desk', short: 'Home', sub: 'Dashboard and requests', tone: 'pink' },
+  { id: 'calendar', label: 'Calendar', short: 'Classes', sub: 'Classes and academic dates', tone: 'aqua' },
+  { id: 'meals', label: 'Meal Plans', short: 'Mess', sub: 'Mess hours, water, chhota runs', tone: 'aqua' },
+  { id: 'sleep', label: 'Sleep Log', short: 'Sleep', sub: 'When you slept', tone: 'mint' },
+  { id: 'wakeup', label: 'Wake-up Calls', short: 'Wake-up', sub: 'Get knocked on time', tone: 'pink' },
+  { id: 'plans', label: 'Plans & Moods', short: 'Plans', sub: "Tonight's board", tone: 'violet' },
+  { id: 'songs', label: 'Jukebox', short: 'Jukebox', sub: 'Speaker queue', tone: 'aqua' },
+  { id: 'content', label: 'Postcards', short: 'Postcards', sub: 'Photos and videos', tone: 'pink' },
+  { id: 'hr', label: 'Guest Register', short: 'Guests', sub: "Who's in which room", tone: 'aqua' },
+  { id: 'split', label: 'Settle Up', short: 'Settle Up', sub: 'Split expenses', tone: 'mint' },
+  { id: 'blinkit', label: 'Room Service', short: 'Blinkit', sub: 'Blinkit runs and orders', tone: 'sun' },
+  { id: 'maintenance', label: 'Repairs', short: 'Repairs', sub: 'Maintenance tickets', tone: 'sun' },
+  { id: 'spc', label: 'SPC Desk', short: 'SPC', sub: 'From and to the SPC reps', tone: 'sun' },
+  { id: 'feedback', label: 'Feedback', short: 'Feedback', sub: 'Tell us about the app', tone: 'violet' },
+  { id: 'alert', label: 'Admin Alert', short: 'Alert', sub: 'Ping the whole floor', tone: 'red' },
+  { id: 'activity', label: 'Activity Log', short: 'Activity', sub: 'Who used what (only you)', tone: 'violet', admin: true },
+]
+
+// Features grouped the same way on the home shelves, the tab bar and the desktop sidebar.
+export const GROUPS = [
+  { id: 'daily', label: 'Daily', items: ['calendar', 'meals', 'sleep', 'wakeup'] },
+  { id: 'floor', label: 'Floor life', items: ['plans', 'songs', 'content', 'hr'] },
+  { id: 'money', label: 'Money', items: ['split', 'blinkit'] },
+  { id: 'backend', label: 'Backend', items: ['maintenance', 'spc', 'feedback', 'alert', 'activity'] },
 ]
 
 // What this person is allowed to see in the menus.
@@ -29,15 +37,19 @@ export function visibleSections(me) {
 
 export const sectionById = (id) => SECTIONS.find(s => s.id === id) || SECTIONS[0]
 
-const TABS = ['dashboard', 'split', 'plans', 'blinkit']
+// Groups with only the sections this person can open; empty groups dropped.
+export function visibleGroups(me) {
+  const ok = new Set(visibleSections(me).map(s => s.id))
+  return GROUPS.map(g => ({ ...g, sections: g.items.filter(id => ok.has(id)).map(sectionById) })).filter(g => g.sections.length)
+}
+export const groupOf = (id) => GROUPS.find(g => g.items.includes(id))
 
 const ICONS = {
   dashboard: <><path d="M5 17a7 7 0 0 1 14 0" /><path d="M12 10V7M10 7h4M3 17h18M4 20h16" /></>,
-  hr: <><circle cx="8" cy="16" r="4" /><path d="M11 13l9-9M16 8l2.5 2.5M13.5 10.5l2 2" /></>,
-  split: <><circle cx="12" cy="12" r="9" /><path d="M9 7.5h6M9 11h6M11 7.5c3.5 0 3.5 7 0 7h-2l5 3.5" /></>,
-  plans: <><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" /><path d="M19 17v4M17 19h4" /></>,
-  blinkit: <><path d="M5 8h14l-1 12H6L5 8z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></>,
-  more: <><rect x="4" y="4" width="6" height="6" rx="1.5" /><rect x="14" y="4" width="6" height="6" rx="1.5" /><rect x="4" y="14" width="6" height="6" rx="1.5" /><rect x="14" y="14" width="6" height="6" rx="1.5" /></>,
+  daily: <><rect x="4" y="5" width="16" height="15" rx="2.5" /><path d="M4 10h16M9 3v4M15 3v4" /><path d="M8.5 14h3M8.5 17h6" /></>,
+  floor: <><path d="M4 11l8-6 8 6" /><path d="M6 10v10h12V10" /><path d="M10 20v-5h4v5" /></>,
+  money: <><circle cx="12" cy="12" r="9" /><path d="M9 7.5h6M9 11h6M11 7.5c3.5 0 3.5 7 0 7h-2l5 3.5" /></>,
+  backend: <><path d="M14.5 6.5a4 4 0 0 0-5.3 5.3L4 17l3 3 5.2-5.2a4 4 0 0 0 5.3-5.3l-2.3 2.3-2.4-.6-.6-2.4z" /></>,
 }
 
 function Icon({ name }) {
@@ -57,81 +69,96 @@ export function NeonSign({ small }) {
   )
 }
 
-// Desktop: a full sidebar listing every section.
+function NavItem({ s, active, onSelect }) {
+  return (
+    <button
+      className={`nav-item tone-${s.tone} ${active === s.id ? 'active' : ''}`}
+      aria-current={active === s.id ? 'page' : undefined}
+      onClick={() => onSelect(s.id)}
+    >
+      <span className="dot" />
+      <span className="nav-text">
+        <span className="nav-label">{s.label}</span>
+        <span className="nav-sub">{s.sub}</span>
+      </span>
+    </button>
+  )
+}
+
+// Desktop: Front Desk, then every section under its group.
 export default function Sidebar({ active, onSelect }) {
   const me = useMe()
-  const list = visibleSections(me)
   return (
     <aside id="sidebar">
       <div id="brand"><NeonSign small /></div>
       <nav aria-label="Sections">
-        {list.map(s => (
-          <button
-            key={s.id}
-            className={`nav-item tone-${s.tone} ${active === s.id ? 'active' : ''}`}
-            aria-current={active === s.id ? 'page' : undefined}
-            onClick={() => onSelect(s.id)}
-          >
-            <span className="dot" />
-            <span className="nav-text">
-              <span className="nav-label">{s.label}</span>
-              <span className="nav-sub">{s.sub}</span>
-            </span>
-          </button>
+        <NavItem s={sectionById('dashboard')} active={active} onSelect={onSelect} />
+        {visibleGroups(me).map(g => (
+          <div className="nav-group" key={g.id}>
+            <div className="nav-group-label">{g.label}</div>
+            {g.sections.map(s => <NavItem key={s.id} s={s} active={active} onSelect={onSelect} />)}
+          </div>
         ))}
       </nav>
     </aside>
   )
 }
 
-// Mobile: four main tabs plus a "More" sheet with the full directory.
+// Feature tiles for one group, used in the home shelves and the tab bar sheet.
+export function GroupTiles({ group, active, onSelect, live = {} }) {
+  return (
+    <div className="directory">
+      {group.sections.map(s => (
+        <button key={s.id} className={`dir-tile tone-${s.tone} ${active === s.id ? 'active' : ''}`} onClick={() => onSelect(s.id)}>
+          <span className="dir-dot" />
+          <span className="dir-label">{s.short}</span>
+          <span className="dir-sub">{live[s.id] || s.sub}</span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// Mobile, on every page except Home: Home plus the four groups. A group opens its features.
 export function TabBar({ active, onSelect }) {
   const me = useMe()
-  const [open, setOpen] = useState(false)
-  // Guests can't open Settle Up, so they get the Guest Register in that slot.
-  const tabs = isGuest(me) ? TABS.map(t => (t === 'split' ? 'hr' : t)) : TABS
-  const inMore = !tabs.includes(active)
+  const [open, setOpen] = useState(null)
+  const groups = visibleGroups(me)
+  const sheet = groups.find(g => g.id === open)
+  const current = groupOf(active)?.id
 
   function go(id) {
-    setOpen(false)
+    setOpen(null)
     onSelect(id)
   }
 
+  if (active === 'dashboard') return null
+
   return (
     <>
-      {open && (
-        <div className="sheet-backdrop" onClick={() => setOpen(false)}>
-          <div className="sheet" role="dialog" aria-label="Directory" onClick={e => e.stopPropagation()}>
+      {sheet && (
+        <div className="sheet-backdrop" onClick={() => setOpen(null)}>
+          <div className="sheet" role="dialog" aria-label={sheet.label} onClick={e => e.stopPropagation()}>
             <div className="sheet-head">
-              <h2>Directory</h2>
-              <button className="btn ghost small" onClick={() => setOpen(false)}>Close</button>
+              <h2>{sheet.label}</h2>
+              <button className="btn ghost small" onClick={() => setOpen(null)}>Close</button>
             </div>
-            <div className="directory">
-              {visibleSections(me).filter(s => !tabs.includes(s.id)).map(s => (
-                <button key={s.id} className={`dir-tile tone-${s.tone} ${active === s.id ? 'active' : ''}`} onClick={() => go(s.id)}>
-                  <span className="dir-dot" />
-                  <span className="dir-label">{s.label}</span>
-                  <span className="dir-sub">{s.sub}</span>
-                </button>
-              ))}
-            </div>
+            <GroupTiles group={sheet} active={active} onSelect={go} />
           </div>
         </div>
       )}
       <nav id="tabbar" aria-label="Main">
-        {tabs.map(id => {
-          const s = sectionById(id)
-          return (
-            <button key={id} className={active === id ? 'active' : ''} aria-current={active === id ? 'page' : undefined} onClick={() => go(id)}>
-              <Icon name={id} />
-              <span>{id === 'blinkit' ? 'Blinkit' : id === 'split' ? 'Settle Up' : id === 'hr' ? 'Guests' : id === 'plans' ? 'Plans' : s.label}</span>
-            </button>
-          )
-        })}
-        <button className={inMore || open ? 'active' : ''} aria-expanded={open} onClick={() => setOpen(o => !o)}>
-          <Icon name="more" />
-          <span>More</span>
+        <button onClick={() => go('dashboard')}>
+          <Icon name="dashboard" />
+          <span>Home</span>
         </button>
+        {groups.map(g => (
+          <button key={g.id} className={current === g.id || open === g.id ? 'active' : ''} aria-expanded={open === g.id}
+            onClick={() => (g.sections.length === 1 ? go(g.sections[0].id) : setOpen(o => (o === g.id ? null : g.id)))}>
+            <Icon name={g.id} />
+            <span>{g.label}</span>
+          </button>
+        ))}
       </nav>
     </>
   )
