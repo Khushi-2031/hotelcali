@@ -67,50 +67,59 @@ function NowCard({ tone, kicker, title, sub, onClick }) {
   )
 }
 
-export default function HomeLobby({ go }) {
+function useLiveData(go) {
   const me = useMe()
   const next = useNextClass()
   const meal = useNextMeal()
   const { run, net } = useLiveFloor(me)
-  const groups = visibleGroups(me)
-
   const live = {}
   if (next.c) live.calendar = `Next: ${next.c.start} ${next.when.toLowerCase()}`
   if (meal?.items.length) live.meals = `${meal.meal.label}: ${meal.items[0]}`
   if (run) live.blinkit = `${firstName(run.name)} is ordering`
   if (net) live.split = net > 0 ? `You get back ${fmtINR(net)}` : `You owe ${fmtINR(-net)}`
+  return { me, next, meal, run, net, live }
+}
 
+// Swipe-sideways cards at the top of Home.
+export function NowStrip({ go }) {
+  const { next, meal, run, net } = useLiveData(go)
   return (
-    <div className="lobby">
-      <div className="now-strip" aria-label="Right now">
-        {next.c ? (
-          <NowCard tone="aqua" kicker={`Next class · ${next.when} ${next.c.start}`} title={next.c.title || next.c.course}
-            sub={[next.c.room, next.c.faculty].filter(Boolean).join(' · ')} onClick={() => go('calendar')} />
-        ) : (
-          <NowCard tone="aqua" kicker="Classes" title={next.needsPick ? 'Pick your 2 specializations' : 'No classes coming up'}
-            sub={next.needsPick ? 'To see your timetable here' : null} onClick={() => go('calendar')} />
-        )}
-        {meal && (
-          <NowCard tone="sun" kicker={`${meal.tomorrow ? 'Tomorrow · ' : 'Next meal · '}${meal.meal.label}`}
-            title={meal.items.length ? meal.items.slice(0, 2).join(', ') : 'Menu not in yet'}
-            sub={meal.items.length > 2 ? `+${meal.items.length - 2} more` : null} onClick={() => go('meals')} />
-        )}
-        <NowCard tone="pink" kicker="Blinkit"
-          title={run ? `${firstName(run.name)} is ordering` : 'No run open'}
-          sub={run ? run.item : 'Start one and ping the floor'} onClick={() => go('blinkit')} />
-        {net !== null && (
-          <NowCard tone="mint" kicker="Settle Up"
-            title={net === 0 ? 'All square' : net > 0 ? `You get back ${fmtINR(net)}` : `You owe ${fmtINR(-net)}`}
-            sub="Open your balances" onClick={() => go('split')} />
-        )}
-      </div>
+    <div className="now-strip" aria-label="Right now">
+      {next.c ? (
+        <NowCard tone="aqua" kicker={`Next class · ${next.when} ${next.c.start}`} title={next.c.title || next.c.course}
+          sub={[next.c.room, next.c.faculty].filter(Boolean).join(' · ')} onClick={() => go('calendar')} />
+      ) : (
+        <NowCard tone="aqua" kicker="Classes" title={next.needsPick ? 'Pick your 2 specializations' : 'No classes coming up'}
+          sub={next.needsPick ? 'To see your timetable here' : null} onClick={() => go('calendar')} />
+      )}
+      {meal && (
+        <NowCard tone="sun" kicker={`${meal.tomorrow ? 'Tomorrow · ' : 'Next meal · '}${meal.meal.label}`}
+          title={meal.items.length ? meal.items.slice(0, 2).join(', ') : 'Menu not in yet'}
+          sub={meal.items.length > 2 ? `+${meal.items.length - 2} more` : null} onClick={() => go('meals')} />
+      )}
+      <NowCard tone="pink" kicker="Blinkit"
+        title={run ? `${firstName(run.name)} is ordering` : 'No run open'}
+        sub={run ? run.item : 'Start one and ping the floor'} onClick={() => go('blinkit')} />
+      {net !== null && (
+        <NowCard tone="mint" kicker="Settle Up"
+          title={net === 0 ? 'All square' : net > 0 ? `You get back ${fmtINR(net)}` : `You owe ${fmtINR(-net)}`}
+          sub="Open your balances" onClick={() => go('split')} />
+      )}
+    </div>
+  )
+}
 
-      {groups.map(g => (
+// Every feature, grouped into Daily / Floor life / Money / Backend.
+export function Shelves({ go }) {
+  const { me, live } = useLiveData(go)
+  return (
+    <>
+      {visibleGroups(me).map(g => (
         <section className="shelf" key={g.id} aria-label={g.label}>
           <h3 className="subhead shelf-head">{g.label}</h3>
           <GroupTiles group={g} onSelect={go} live={live} />
         </section>
       ))}
-    </div>
+    </>
   )
 }
