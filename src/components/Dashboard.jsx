@@ -7,6 +7,7 @@ import MealClock from './MealClock'
 import DailyMood from './DailyMood'
 import TodayAtMica from './TodayAtMica'
 import MessMenu from './MessMenu'
+import HomeLobby from './HomeLobby'
 
 const PRESETS = [
   'Pick up my clothes from the washing machine',
@@ -132,7 +133,7 @@ function PingsForMe() {
   )
 }
 
-export default function Dashboard() {
+export default function Dashboard({ go }) {
   const [stats, setStats] = useState({ blinkit: 0, maint: 0, plans: 0 })
   const [openReq, setOpenReq] = useState(0)
 
@@ -152,6 +153,7 @@ export default function Dashboard() {
 
   return (
     <div>
+      <HomeLobby go={go} />
       <SectionHead title="Ashoka 4th, at a glance" desc="Everything happening on the floor right now. Pull any thread from the menu for the full picture." />
       <div className="grid">
         <div className="stat"><div className="n">{stats.blinkit}</div><div className="l">Blinkit orders open</div></div>

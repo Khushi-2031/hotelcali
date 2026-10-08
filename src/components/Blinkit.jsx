@@ -8,7 +8,8 @@ import { pushToast } from './Toast'
 import { computeShares, fmtINR } from '../split'
 
 // Step 1: what you're ordering and for how much. Step 2: who to ping.
-// Step 3 (optional tick): also add it to Settle Up, split equally.
+// Step 3 (optional tick): also add it to Settle Up. You type what each friend
+// owes; your own share is whatever is left of the total.
 function OrderingNow() {
   const me = useMe()
   const [items, setItems] = useState('')
@@ -17,16 +18,32 @@ function OrderingNow() {
   const [extra, setExtra] = useState('')
   const [to, setTo] = useState(['ALL'])
   const [logSplit, setLogSplit] = useState(false)
-  const [splitWith, setSplitWith] = useState(me ? [me] : [])
+  const [friends, setFriends] = useState([])   // who owes you
+  const [owed, setOwed] = useState({})          // { name: rupees as typed }
   const [busy, setBusy] = useState(false)
 
-  const people = splitWith.filter(Boolean)
-  const { shares, error } = logSplit ? computeShares(amount, people, 'equal') : { shares: {}, error: null }
   const amt = Number(amount)
-  const canSave = items.trim() && !busy && (!logSplit || (!error && amt > 0 && me))
+  const others = friends.filter(p => p !== me)
+  const othersTotal = others.reduce((t, p) => t + (Number(owed[p]) || 0), 0)
+  const myShare = Math.round((amt - othersTotal) * 100) / 100
+  const missing = others.filter(p => !(Number(owed[p]) > 0))
+  let shares = {}, error = null
+  if (logSplit) {
+    if (!(amt > 0)) error = 'Add the total amount above first'
+    else if (!others.length) error = 'Pick who owes you'
+    else if (missing.length) error = `Enter what ${firstName(missing[0])} owes`
+    else if (myShare < 0) error = `That's ${fmtINR(-myShare)} more than the total`
+    else ({ shares, error } = computeShares(amt, myShare > 0 ? [me, ...others] : others, 'exact', { ...owed, [me]: myShare }))
+  }
+  const canSave = items.trim() && !busy && (!logSplit || (!error && me))
 
-  function toggleSplit(p) {
-    setSplitWith(list => list.includes(p) ? list.filter(x => x !== p) : [...list, p])
+  function tick(on) {
+    setLogSplit(on)
+    // Start with the people you just pinged by name.
+    if (on && !friends.length && !to.includes('ALL')) setFriends(to.filter(p => p !== me))
+  }
+  function toggleFriend(p) {
+    setFriends(list => list.includes(p) ? list.filter(x => x !== p) : [...list, p])
   }
 
   async function save(e) {
@@ -46,15 +63,15 @@ function OrderingNow() {
         })
       }
       if (logSplit) {
-        await insertRow('expenses', { description: `Blinkit: ${what}`.slice(0, 120), amount: amt, paid_by: me, split_type: 'equal', shares, created_by: me })
-        const others = Object.keys(shares).filter(p => p !== me)
-        await Promise.all(others.map(p => sendPing({
+        await insertRow('expenses', { description: `Blinkit: ${what}`.slice(0, 120), amount: amt, paid_by: me, split_type: 'exact', shares, created_by: me })
+        const owers = Object.keys(shares).filter(p => p !== me)
+        await Promise.all(owers.map(p => sendPing({
           from: me, recipients: [p], kind: 'tab', title: 'Settle Up',
           body: `${firstName(me)} added a Blinkit run (${fmtINR(amt)}). Your share: ${fmtINR(shares[p])}.`,
         })))
       }
       pushToast(logSplit ? 'Run logged and added to Settle Up' : to.length ? 'Run logged, people pinged' : 'Run logged')
-      setItems(''); setAmount(''); setExtra(''); setLogSplit(false); setSplitWith(me ? [me] : [])
+      setItems(''); setAmount(''); setExtra(''); setLogSplit(false); setFriends([]); setOwed({})
       window.dispatchEvent(new Event('hc-blinkit-refresh'))
     } catch {
       pushToast('Could not save, try again')
@@ -84,26 +101,43 @@ function OrderingNow() {
       <p className="form-hint" style={{ marginTop: -4 }}>Tap Everyone off and pick names to ping only some people, or clear it to ping nobody.</p>
 
       <label className="remember" style={{ marginTop: 4, marginBottom: 12 }}>
-        <input type="checkbox" checked={logSplit} onChange={e => setLogSplit(e.target.checked)} />
-        <span>Also log it as an expense in Settle Up (you paid, split equally)</span>
+        <input type="checkbox" checked={logSplit} onChange={e => tick(e.target.checked)} />
+        <span>Also log it as an expense in Settle Up (you paid, enter what each person owes)</span>
       </label>
 
       {logSplit && (
         <div className="notify-picker">
           <div className="np-head">
-            <label>Split between</label>
-            <span className="np-count">{people.length ? `${people.length} people` : 'Nobody yet'}</span>
+            <label>Who owes you</label>
+            <span className="np-count">{others.length ? `${others.length} selected` : 'Nobody yet'}</span>
           </div>
           <div className="np-chips">
-            {ALL_PEOPLE.map(p => (
-              <button type="button" key={p} className={`np-chip ${people.includes(p) ? 'on' : ''}`} aria-pressed={people.includes(p)} onClick={() => toggleSplit(p)}>
-                {p === me ? 'Me' : firstName(p)}
+            {ALL_PEOPLE.filter(p => p !== me).map(p => (
+              <button type="button" key={p} className={`np-chip ${others.includes(p) ? 'on' : ''}`} aria-pressed={others.includes(p)} onClick={() => toggleFriend(p)}>
+                {firstName(p)}
               </button>
             ))}
           </div>
-          {amt > 0 && !error && <p className="form-hint" style={{ marginTop: 8 }}>{fmtINR(Object.values(shares)[0] || 0)} each{people.length > 1 ? `, ${people.length} ways` : ''}.</p>}
-          {amount && error && <div className="form-error" role="alert">{error}</div>}
-          {!(amt > 0) && <p className="form-hint" style={{ marginTop: 8 }}>Add the amount above to split it.</p>}
+          {others.length > 0 && (
+            <div className="split-list" style={{ marginTop: 12 }}>
+              {others.map(p => (
+                <div className="split-row" key={p}>
+                  <span>{p}</span>
+                  <span className="split-input">
+                    <span>₹</span>
+                    <input type="number" inputMode="decimal" min="0" step="0.01" aria-label={`${p} owes`}
+                      value={owed[p] ?? ''} onChange={e => setOwed(o => ({ ...o, [p]: e.target.value }))} />
+                  </span>
+                </div>
+              ))}
+              <div className="split-row">
+                <span>Your share</span>
+                <span className="split-val">{amt > 0 && myShare >= 0 ? fmtINR(myShare) : '–'}</span>
+              </div>
+              <div className="split-total">{fmtINR(othersTotal)} from friends of {fmtINR(amt || 0)} total</div>
+            </div>
+          )}
+          {error && <div className="form-error" role="alert" style={{ marginTop: 8 }}>{error}</div>}
         </div>
       )}
 
