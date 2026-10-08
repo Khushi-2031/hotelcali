@@ -7,7 +7,7 @@ import MealClock from './MealClock'
 import DailyMood from './DailyMood'
 import TodayAtMica from './TodayAtMica'
 import MessMenu from './MessMenu'
-import HomeLobby from './HomeLobby'
+import { NowStrip, Shelves } from './HomeLobby'
 
 const PRESETS = [
   'Pick up my clothes from the washing machine',
@@ -153,18 +153,19 @@ export default function Dashboard({ go }) {
 
   return (
     <div>
-      <HomeLobby go={go} />
-      <SectionHead title="Ashoka 4th, at a glance" desc="Everything happening on the floor right now. Pull any thread from the menu for the full picture." />
+      <NowStrip go={go} />
+      <SectionHead title="Ashoka 4th, at a glance" desc="What's happening on the floor right now, and the front desk for anything you need a hand with." />
       <div className="grid">
         <div className="stat"><div className="n">{stats.blinkit}</div><div className="l">Blinkit orders open</div></div>
         <div className="stat"><div className="n">{stats.maint}</div><div className="l">Repairs pending</div></div>
         <div className="stat"><div className="n">{stats.plans}</div><div className="l">Plans posted today</div></div>
         <div className="stat"><div className="n">{openReq}</div><div className="l">Front desk requests open</div></div>
       </div>
+      <FrontDeskRequests onCount={setOpenReq} />
+      <Shelves go={go} />
       <DailyMood />
       <TodayAtMica />
       <PingsForMe />
-      <FrontDeskRequests onCount={setOpenReq} />
       <MessMenu />
       <h3 className="subhead">Mess hours</h3>
       <div className="card"><MealClock compact /></div>

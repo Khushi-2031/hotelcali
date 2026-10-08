@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { listAll, insertRow, updateRow, deleteRow } from '../api'
-import { useMe } from '../identity'
+import { listAll, insertRow, updateRow, deleteRow, sendPing } from '../api'
+import { useMe, firstName } from '../identity'
 import { PostingAs } from './People'
 import { SectionHead, Empty, RemoveMine } from './ui'
 import { pushToast } from './Toast'
@@ -25,7 +25,11 @@ export default function Plans() {
     const finalMood = mood === OTHER ? custom.trim() : mood
     if (!finalMood) return
     await insertRow('plans', { name: me, mood: finalMood, note, plus_ones: [] })
-    pushToast('Posted to the floor')
+    await sendPing({
+      from: me, recipients: ['ALL'], kind: 'plan', title: `Plan: ${finalMood}`,
+      body: `${me ? firstName(me) : 'Someone'} is up for ${finalMood.toLowerCase()}${note.trim() ? ` (${note.trim()})` : ''}. Open Plans to +1.`,
+    })
+    pushToast('Posted and the floor was pinged')
     setNote(''); setCustom('')
     load()
   }
@@ -41,7 +45,7 @@ export default function Plans() {
 
   return (
     <div>
-      <SectionHead title="Plans & Moods" desc="Post what you're up for and see who else joins in. Pick from the list or write your own mood." />
+      <SectionHead title="Plans & Moods" desc="Post what you're up for and see who else joins in. Posting pings everyone on the floor." />
       <form className="inline-form" onSubmit={submit}>
         <PostingAs />
         <div className="form-row">
