@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '../supabaseClient'
 import { listAll, insertRow, updateRow, deleteRow, sendPing } from '../api'
 import { useMe, firstName } from '../identity'
 import { SectionHead, Empty, fmtDate, RemoveMine } from './ui'
@@ -86,36 +85,12 @@ function ChhotaRun() {
 }
 
 export default function Meals() {
-  const [count, setCount] = useState(0)
-
-  async function refreshCount() {
-    const today = new Date().toISOString().slice(0, 10)
-    const { count: c } = await supabase
-      .from('water_checkins')
-      .select('*', { count: 'exact', head: true })
-      .eq('day', today)
-    setCount(c || 0)
-  }
-
-  useEffect(() => { refreshCount() }, [])
-
-  async function logWater() {
-    const { error } = await supabase.from('water_checkins').insert({ day: new Date().toISOString().slice(0, 10) })
-    if (!error) { pushToast('Logged, stay hydrated'); refreshCount() }
-  }
-
   return (
     <div>
-      <SectionHead title="Meal Plans" desc="This week's mess menu and mess timings, the floor water tally, and chhota runs to the canteen, MICAfe or the chai tapri." />
+      <SectionHead title="Meal Plans" desc="This week's mess menu, mess timings, and chhota runs to the canteen, MICAfe or the chai tapri." />
       <MessMenu />
       <h3 className="subhead">Mess timings</h3>
-      <div className="card">
-        <MealClock />
-        <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-          <button className="btn ghost small" onClick={logWater}>I drank a glass of water</button>
-          <span className="card-meta" style={{ marginTop: 0 }}>{count} glasses logged by the floor today</span>
-        </div>
-      </div>
+      <div className="card"><MealClock /></div>
       <ChhotaRun />
     </div>
   )
