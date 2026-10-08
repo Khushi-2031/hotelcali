@@ -7,7 +7,6 @@ import { NotifyPicker } from './People'
 import { pushToast } from './Toast'
 import MealClock from './MealClock'
 import MessMenu from './MessMenu'
-import { MyClasses, UpcomingEvents } from './Calendar'
 
 const SPOTS = ['Chhota canteen', 'MICAfe', 'Main gate', 'Stationery shop', 'Chai tapri outside']
 
@@ -107,11 +106,9 @@ export default function Meals() {
 
   return (
     <div>
-      <SectionHead title="Meal Plans" desc="Today's mess menu, your classes, what's coming up on the academic calendar, mess timings, the floor water tally and chhota runs." />
+      <SectionHead title="Meal Plans" desc="This week's mess menu and mess timings, the floor water tally, and chhota runs to the canteen, MICAfe or the chai tapri." />
       <MessMenu />
-      <MyClasses />
-      <UpcomingEvents />
-      <h3 className="subhead">Mess hours and water</h3>
+      <h3 className="subhead">Mess timings</h3>
       <div className="card">
         <MealClock />
         <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>

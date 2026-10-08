@@ -10,7 +10,7 @@ function addDays(day, n) {
   return ymd(d)
 }
 
-export function MyClasses() {
+function MyClasses() {
   const schedule = useSchedule()
   const subjects = useMySubjects()
   const [day, setDay] = useState(ymd())
@@ -53,29 +53,6 @@ export function MyClasses() {
         {!classes.length && !events.length && <div className="card-meta">{subjects.length ? 'No classes for you this day.' : 'No classes.'}</div>}
         {!subjects.length && classes.length > 0 && <div className="card-meta" style={{ marginTop: 8 }}>Showing every class. Pick your specializations above to see just yours.</div>}
         {schedule.checked_at && <div className="card-meta" style={{ marginTop: 10 }}>Timetable checked {new Date(schedule.checked_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}</div>}
-      </div>
-    </>
-  )
-}
-
-// Next few academic-calendar items, for the Meal Plans (Daily) tab.
-export function UpcomingEvents({ n = 5 }) {
-  const today = ymd()
-  const list = ACADEMIC_CALENDAR.filter(e => (e.end || e.start) >= today).slice(0, n)
-  return (
-    <>
-      <h3 className="subhead">Academic calendar</h3>
-      <div className="card">
-        {list.length ? list.map((e, i) => {
-          const now = e.start <= today && (e.end || e.start) >= today
-          return (
-            <div key={i} className={`cal-row ${now ? 'is-now' : ''}`}>
-              <span className="cal-date">{fmtRange(e)}</span>
-              <span className="cal-title">{e.title}</span>
-              <span className={`cal-pill cal-${e.type}`}>{now ? 'Now' : TYPE_LABEL[e.type]}</span>
-            </div>
-          )
-        }) : <div className="card-meta">Nothing coming up.</div>}
       </div>
     </>
   )
