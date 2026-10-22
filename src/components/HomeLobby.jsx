@@ -6,6 +6,7 @@ import { useMessMenu, MEALS } from '../messMenu'
 import { ymd } from '../data/academicCalendar'
 import { netBalances, fmtINR, toRupees } from '../split'
 import { visibleGroups, GroupTiles } from './Sidebar'
+import { GofNowCard } from './GoF'
 
 const hm = (d) => `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x }
@@ -85,6 +86,7 @@ export function NowStrip({ go }) {
   const { next, meal, run, net } = useLiveData(go)
   return (
     <div className="now-strip" aria-label="Right now">
+      <GofNowCard go={go} />
       {next.c ? (
         <NowCard tone="aqua" kicker={`Next class · ${next.when} ${next.c.start}`} title={next.c.title || next.c.course}
           sub={[next.c.room, next.c.faculty].filter(Boolean).join(' · ')} onClick={() => go('calendar')} />
