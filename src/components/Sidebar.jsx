@@ -10,6 +10,7 @@ export const SECTIONS = [
   { id: 'sleep', label: 'Sleep Log', short: 'Sleep', sub: 'When you slept', tone: 'mint' },
   { id: 'wakeup', label: 'Wake-up Calls', short: 'Wake-up', sub: 'Get knocked on time', tone: 'pink' },
   { id: 'plans', label: 'Plans & Moods', short: 'Plans', sub: "Tonight's board", tone: 'violet' },
+  { id: 'gof', label: 'House Cup', short: 'GoF', sub: 'Goblet of Fire standings & schedule', tone: 'red' },
   { id: 'songs', label: 'Jukebox', short: 'Jukebox', sub: 'Speaker queue', tone: 'aqua' },
   { id: 'content', label: 'Postcards', short: 'Postcards', sub: 'Photos and videos', tone: 'pink' },
   { id: 'hr', label: 'Guest Register', short: 'Guests', sub: "Who's in which room", tone: 'aqua' },
@@ -25,7 +26,7 @@ export const SECTIONS = [
 // Features grouped the same way on the home shelves, the tab bar and the desktop sidebar.
 export const GROUPS = [
   { id: 'daily', label: 'Daily', items: ['calendar', 'meals', 'sleep', 'wakeup'] },
-  { id: 'floor', label: 'Floor life', items: ['plans', 'songs', 'content', 'hr'] },
+  { id: 'floor', label: 'Floor life', items: ['gof', 'plans', 'songs', 'content', 'hr'] },
   { id: 'money', label: 'Money', items: ['split', 'blinkit'] },
   { id: 'backend', label: 'Backend', items: ['maintenance', 'spc', 'feedback', 'alert', 'activity'] },
 ]

@@ -14,6 +14,7 @@ import Spc from './components/Spc'
 import Songs from './components/Songs'
 import HR from './components/HR'
 import Feedback from './components/Feedback'
+import GoF from './components/GoF'
 import { CheckIn, CheckedInLine, NotifyButton, PinGate } from './components/People'
 import { initOneSignal } from './onesignal'
 import { useMe, pinVerified, isGuest, isAdmin, GUEST_HIDDEN } from './identity'
@@ -42,6 +43,7 @@ const SCREENS = {
   calendar: Calendar,
   sleep: SleepLog,
   activity: Activity,
+  gof: GoF,
 }
 
 export default function App() {
