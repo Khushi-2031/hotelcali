@@ -7,6 +7,12 @@ const BUILD = new Date().toISOString().slice(0, 16).replace('T', ' ')
 
 export default defineConfig({
   define: { __BUILD__: JSON.stringify(BUILD) },
+  // Dev mirror of the /api/gof rewrite in vercel.json.
+  server: {
+    proxy: {
+      '/api/gof': { target: 'https://gof-2026.pages.dev', changeOrigin: true, rewrite: () => '/api/data' },
+    },
+  },
   plugins: [
     react(),
     {
