@@ -8,6 +8,7 @@ import DailyMood from './DailyMood'
 import TodayAtMica from './TodayAtMica'
 import MessMenu from './MessMenu'
 import { NowStrip, Shelves } from './HomeLobby'
+import { GofMini } from './GoF'
 
 const PRESETS = [
   'Pick up my clothes from the washing machine',
@@ -135,34 +136,13 @@ function PingsForMe() {
 
 export default function Dashboard({ go }) {
   const me = useMe()
-  const [stats, setStats] = useState({ blinkit: 0, maint: 0, plans: 0 })
-  const [openReq, setOpenReq] = useState(0)
-
-  useEffect(() => {
-    (async () => {
-      const [blinkit, maint, plans] = await Promise.all([
-        listAll('blinkit_orders'), listAll('maintenance_requests'), listAll('plans'),
-      ])
-      const today = new Date().toDateString()
-      setStats({
-        blinkit: blinkit.filter(o => !o.done).length,
-        maint: maint.filter(m => !m.resolved).length,
-        plans: plans.filter(p => new Date(p.created_at).toDateString() === today).length,
-      })
-    })()
-  }, [])
 
   return (
     <div>
       <NowStrip go={go} />
+      <GofMini go={go} />
       <SectionHead title="Ashoka 4th, at a glance" desc="What's happening on the floor right now, and the front desk for anything you need a hand with." />
-      <div className="grid">
-        <div className="stat"><div className="n">{stats.blinkit}</div><div className="l">Blinkit orders open</div></div>
-        <div className="stat"><div className="n">{stats.maint}</div><div className="l">Repairs pending</div></div>
-        <div className="stat"><div className="n">{stats.plans}</div><div className="l">Plans posted today</div></div>
-        <div className="stat"><div className="n">{openReq}</div><div className="l">Front desk requests open</div></div>
-      </div>
-      <FrontDeskRequests onCount={setOpenReq} />
+      <FrontDeskRequests />
       <Shelves go={go} />
       {!isGuest(me) && <DailyMood />}
       <TodayAtMica />
