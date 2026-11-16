@@ -1,122 +1,187 @@
 {
-  "updated_at": "2026-11-08T20:00:00+05:30",
-  "source": "Mess Menu - 9th Nov to 15th Nov 2026 (messcomm@micamail.in)",
-  "week_start": "2026-11-09",
-  "week_end": "2026-11-15",
+  "updated_at": "2026-11-15T20:52:00+05:30",
+  "source": "Mess Menu - 16th Nov to 22nd Nov 2026 (messcomm@micamail.in)",
+  "week_start": "2026-11-16",
+  "week_end": "2026-11-22",
   "notes": [],
   "days": [
     {
-      "date": "2026-11-09",
+      "date": "2026-11-16",
       "breakfast": [
-        "Cheese Paratha"
+        "Moong Dal Cheela"
       ],
       "lunch": [
-        "Matar Makhana Masala",
-        "Aloo Jeera",
-        "Dal Tadka",
-        "Coriander Rice",
+        "Kadai Mushroom",
+        "Masala Jeera Aloo",
+        "Dal Palak",
         "Roti",
-        "Fryums, Pickle, Papad",
+        "Steamed Rice",
+        "Fryums, Pickle, Green Salad",
         "Curd"
       ],
       "snacks": [
-        "Corn Chaat + Nimbu Paani"
+        "Peri Peri Fries"
       ],
       "dinner": [
-        "Dal Makhani",
-        "Peas Curry",
-        "Veg Clear Soup",
+        "Chilly Gobhi Dry",
+        "Sweet Corn Soup",
+        "Baked Veg",
+        "Dal Fry",
         "Jeera Rice",
-        "Stuffed Kulcha",
-        "Papad, Salad",
+        "Roti",
         "Curd"
       ],
       "dessert": [
-        "Malpua"
+        "Rice Kheer"
       ]
     },
     {
-      "date": "2026-11-10",
+      "date": "2026-11-17",
+      "breakfast": [
+        "Bombay Sandwich"
+      ],
+      "lunch": [
+        "Palak Paneer",
+        "Dry Ghughni Masala",
+        "Arhar Dal",
+        "Steamed Rice",
+        "Roti",
+        "Pineapple Raita",
+        "Papad, Pickle, Salad"
+      ],
+      "snacks": [
+        "Sev Puri"
+      ],
+      "dinner": [
+        "Hot & Sour Soup",
+        "Manchurian",
+        "Noodles",
+        "Fried Rice",
+        "Chinese Salad",
+        "Schezwan Sauce"
+      ],
+      "dessert": [
+        "Thums Up"
+      ]
+    },
+    {
+      "date": "2026-11-18",
+      "breakfast": [
+        "Achari Aloo Paratha"
+      ],
+      "lunch": [
+        "Masala Dosa",
+        "Plain Dosa",
+        "Medu Wada",
+        "Sambar",
+        "Lemon Rice",
+        "Coconut Chutney",
+        "Mysore chutney",
+        "Podi Masala"
+      ],
+      "snacks": [
+        "Chana Chaat + Adrak Chai"
+      ],
+      "dinner": [
+        "Chicken Ghee Roast",
+        "Paneer Ghee Roast",
+        "Roti",
+        "Steamed Rice",
+        "Curd",
+        "Dal Fry",
+        "Salad, Papad"
+      ],
+      "dessert": [
+        "Choco Chip Ice-Cream"
+      ],
+      "nonveg": [
+        "Chicken Ghee Roast"
+      ]
+    },
+    {
+      "date": "2026-11-19",
       "breakfast": [
         "Masala Poha + French Toast"
       ],
       "lunch": [
-        "Kadai Paneer",
-        "Desi Chana",
-        "Yellow Dal",
+        "Amritsari Chole",
+        "Palak Poori",
         "Steamed Rice",
-        "Roti",
-        "Papad, Green Salad",
-        "Pineapple Raita"
+        "Boondi Raita",
+        "Papad + Green Salad",
+        "Dal Tadka",
+        "Pakoda Kadi"
       ],
       "snacks": [
-        "Ghugra Sandwich"
+        "Spring Roll"
       ],
       "dinner": [
-        "Mix Veg Curry",
-        "Black Dal",
-        "Plain Rice",
+        "Veg Tawa Masala",
+        "Arhar Dal",
+        "Steamed Rice",
         "Roti",
-        "Rice Papad, Pickle, Salad",
-        "Curd"
+        "Curd",
+        "Macaroni Salad",
+        "Manchow Soup"
       ],
       "dessert": [
-        "Coconut Barfi"
+        "Atta Halwa"
       ]
     },
     {
-      "date": "2026-11-11",
+      "date": "2026-11-20",
       "breakfast": [
-        "Beetroot Thepla"
+        "Beetroot Thepla + Sabzi"
       ],
       "lunch": [
-        "Mushroom Masala",
-        "Besan Bhindi",
+        "Paneer Bhurjee",
+        "Green Moong",
         "Masoor Dal",
-        "Plain Rice",
+        "Steamed Rice",
         "Roti",
-        "Fryums, Pickle, Salad",
+        "Papad, Pickle, Salad",
         "Curd"
       ],
       "snacks": [
-        "Khaman"
+        "Aloo Pyaaz Kachori"
       ],
       "dinner": [
-        "Butter Chicken",
-        "Butter Paneer",
-        "Naan",
+        "Egg Ghotala",
+        "Soyabean Masala",
         "Dhaba Style Dal",
-        "Steamed Rice",
-        "Mix Veg Raita",
-        "Papad, Salad"
+        "Peas Pulao",
+        "Triangle Paratha",
+        "Peanut Chaat",
+        "Curd"
       ],
       "dessert": [
-        "Mix Ice-Cream"
+        "Fruit Custard"
       ],
       "nonveg": [
-        "Butter Chicken"
+        "Egg Ghotala"
       ]
     },
     {
-      "date": "2026-11-12",
+      "date": "2026-11-21",
       "breakfast": [
-        "Vermicelli Upma"
+        "Banana Pancakes"
       ],
       "lunch": [
-        "Pindi Chole",
-        "Arhar Dal",
-        "Bhature",
-        "Tomato Onion Rice",
-        "Onion Rings Salad",
-        "Fried Papad & Mirchi",
-        "Boondi Raita"
+        "Bhindi Masala",
+        "Lauki Chana Dal",
+        "Roti",
+        "Toor Daal",
+        "Steamed Rice",
+        "Papad",
+        "Pickle + Salad",
+        "Curd"
       ],
       "snacks": [
-        "Bhel"
+        "Sooji Toast + Parle G"
       ],
       "dinner": [
-        "Mix Veg Paratha",
-        "Onion Paratha",
+        "Paneer Paratha",
+        "Mix-Veg Paratha",
         "Lehsuni Dal",
         "Coriander Rice",
         "Green Chutney",
@@ -124,103 +189,41 @@
         "Curd"
       ],
       "dessert": [
-        "Elaichi Lassi"
+        "Kesar Badam Milk"
       ]
     },
     {
-      "date": "2026-11-13",
+      "date": "2026-11-22",
       "breakfast": [
-        "Moong Dal Chilla"
-      ],
-      "lunch": [
-        "Paneer Lababdar",
-        "Masala Moong Curry",
-        "Urad Dal",
-        "Steamed Rice",
-        "Roti",
-        "Fryums, Pickle, Salad",
-        "Curd"
-      ],
-      "snacks": [
-        "Samosa Chaat + Adrak Chai"
-      ],
-      "dinner": [
-        "Goan Egg Curry",
-        "Soyabean Masala",
-        "Toor Dal",
-        "Hara Pulao",
-        "Roti",
-        "Koshimbir Salad",
-        "Mix Veg Raita"
-      ],
-      "dessert": [
-        "Pineapple Juice"
-      ],
-      "nonveg": [
-        "Goan Egg Curry"
-      ]
-    },
-    {
-      "date": "2026-11-14",
-      "breakfast": [
-        "Achaari Aloo Paratha"
+        "Mooli Paratha"
       ],
       "lunch": [
         "Rajma Masala",
-        "Gobhi Masala",
-        "Dal Tadka",
+        "Cheese Kofta",
+        "Moong Dal",
         "Jeera Rice",
-        "Roti",
-        "Fryums, Papad, Pickle",
-        "Curd"
-      ],
-      "snacks": [
-        "Onion Maggi"
-      ],
-      "dinner": [
-        "Kashmiri Dum Aloo",
-        "Dal Fry",
-        "Steamed Rice",
-        "Macaroni Salad",
-        "Curd",
-        "Triangle Paratha"
-      ],
-      "dessert": [
-        "Gulab Jamun"
-      ]
-    },
-    {
-      "date": "2026-11-15",
-      "breakfast": [
-        "Ragi Uttapam"
-      ],
-      "lunch": [
-        "Desi Chana",
-        "Sev Tamatar",
-        "Khichdi",
-        "Punjabi Kadhi",
-        "Methi Thepla",
-        "Kakdi Salad",
+        "Mix Salad",
         "Papad",
-        "Buttermilk"
+        "Curd",
+        "Roti"
       ],
       "snacks": [
-        "Indori Poha"
+        "Pasta"
       ],
       "dinner": [
-        "Chicken Dum Biriyani",
-        "Veg Dum Biriyani",
-        "Veg Gravy",
-        "Chicken Gravy",
-        "Cucumber Raita",
-        "Papad"
+        "Mughlai Chicken",
+        "Mughlai Paneer",
+        "Dal Tadka",
+        "Steamed Rice",
+        "Tandoori Roti",
+        "Papad, Pickle, Salad",
+        "Onion Raita"
       ],
       "dessert": [
-        "Choco Chip Ice Cream"
+        "Mango Dolly (L)"
       ],
       "nonveg": [
-        "Chicken Dum Biriyani",
-        "Chicken Gravy"
+        "Mughlai Chicken"
       ]
     }
   ]
